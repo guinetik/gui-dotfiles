@@ -11,8 +11,7 @@ ohmyzsh/ohmyzsh lib/theme-and-appearance.zsh
 ohmyzsh/ohmyzsh plugins/history
 ohmyzsh/ohmyzsh plugins/history-substring-search
 
-# Directory navigation
-ohmyzsh/ohmyzsh plugins/z
+# Note: Using zoxide for smart directory navigation instead of z plugins
 
 # Git integration
 ohmyzsh/ohmyzsh plugins/git
@@ -51,12 +50,8 @@ zsh-users/zsh-history-substring-search
 # Better tab completion
 zsh-users/zsh-completions
 
-# Fast directory jumping
-rupa/z
-
 # Additional utilities
 MichaelAquilina/zsh-you-should-use
 zsh-users/zsh-syntax-highlighting
 
-# Powerlevel10k - only used if starship is not available
-romkatv/powerlevel10k
+# Powerlevel10k is loaded conditionally in .zshrc if starship is not available
