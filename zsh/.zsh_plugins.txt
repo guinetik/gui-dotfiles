@@ -1,0 +1,62 @@
+# Antidote - plugins list
+# Format: username/repo path/to/plugin branch:tag
+
+# Oh-My-Zsh libraries and plugins
+ohmyzsh/ohmyzsh lib/completion.zsh
+ohmyzsh/ohmyzsh lib/history.zsh
+ohmyzsh/ohmyzsh lib/key-bindings.zsh
+ohmyzsh/ohmyzsh lib/theme-and-appearance.zsh
+
+# History enhancements
+ohmyzsh/ohmyzsh plugins/history
+ohmyzsh/ohmyzsh plugins/history-substring-search
+
+# Directory navigation
+ohmyzsh/ohmyzsh plugins/z
+
+# Git integration
+ohmyzsh/ohmyzsh plugins/git
+ohmyzsh/ohmyzsh plugins/gitfast
+ohmyzsh/ohmyzsh plugins/git-extras
+
+# Development tools
+ohmyzsh/ohmyzsh plugins/node
+ohmyzsh/ohmyzsh plugins/npm
+ohmyzsh/ohmyzsh plugins/python
+ohmyzsh/ohmyzsh plugins/pip
+ohmyzsh/ohmyzsh plugins/rust
+ohmyzsh/ohmyzsh plugins/cargo
+ohmyzsh/ohmyzsh plugins/vscode
+ohmyzsh/ohmyzsh plugins/github
+
+# Command completion helpers
+ohmyzsh/ohmyzsh plugins/command-not-found
+ohmyzsh/ohmyzsh plugins/sudo
+
+# Useful utilities
+ohmyzsh/ohmyzsh plugins/extract
+ohmyzsh/ohmyzsh plugins/colored-man-pages
+
+# Fast syntax highlighting
+zdharma-continuum/fast-syntax-highlighting kind:defer
+zdharma-continuum/fast-syntax-highlighting kind:clone
+
+# Fast auto-suggestions
+zsh-users/zsh-autosuggestions kind:defer
+zsh-users/zsh-autosuggestions kind:clone
+
+# Command history auto-completion
+zsh-users/zsh-history-substring-search
+
+# Better tab completion
+zsh-users/zsh-completions
+
+# Fast directory jumping
+rupa/z
+
+# Additional utilities
+MichaelAquilina/zsh-you-should-use
+zsh-users/zsh-syntax-highlighting
+
+# Powerlevel10k - only used if starship is not available
+romkatv/powerlevel10k

@@ -1,0 +1,65 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Wait 10 milliseconds for starship to check files under the current directory.
+scan_timeout = 10
+
+# Disable the blank line at the start of the prompt
+add_newline = true
+
+# Replace the "❯" symbol with "→"
+[character]
+success_symbol = "[→](bold green)"
+error_symbol = "[→](bold red)"
+
+# Shows an icon that should be included by zshrc or bashrc
+[shell]
+bash_indicator = "bash"
+zsh_indicator = "zsh"
+disabled = false
+
+# Display time
+[time]
+disabled = false
+format = '[\[ $time \]]($style) '
+time_format = "%T"
+style = "bright-black"
+
+# Battery configuration
+[battery]
+full_symbol = "🔋"
+charging_symbol = "⚡️"
+discharging_symbol = "💀"
+
+# Shows current git branch
+[git_branch]
+symbol = "🌱 "
+truncation_length = 8
+truncation_symbol = "..."
+ignore_branches = ["master", "main"]
+
+# Shows current git status
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "bold green"
+conflicted = "🏳"
+up_to_date = "✓"
+untracked = "?"
+ahead = "⇡${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+behind = "⇣${count}"
+stashed = "📦"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+# Shows kubernetes context and namespace
+[kubernetes]
+format = 'via [☸ $context \($namespace\)](dimmed green) '
+disabled = false
+
+# Shows python environment
+[python]
+symbol = "🐍 "
+pyenv_version_name = true
