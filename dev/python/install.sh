@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source common utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../common/utils.sh"
+PYTHON_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "$PYTHON_SCRIPT_DIR/../../common/utils.sh"
 
 # Python Development Environment Setup
 print_info "Setting up Python Development Environment..."
@@ -12,7 +12,7 @@ mkdir -p "$HOME/.local/share/gui-dotfiles"
 
 # Install pyenv
 print_info "Installing pyenv (Python Version Manager)..."
-bash "$SCRIPT_DIR/install_pyenv.sh"
+bash "$PYTHON_SCRIPT_DIR/install_pyenv.sh"
 if [ $? -ne 0 ]; then
     print_error "Failed to install pyenv!"
     exit 1
@@ -26,7 +26,7 @@ eval "$(pyenv init -)"
 
 # Install latest Python versions
 print_info "Installing Python versions..."
-bash "$SCRIPT_DIR/install_python.sh"
+bash "$PYTHON_SCRIPT_DIR/install_python.sh"
 if [ $? -ne 0 ]; then
     print_error "Failed to install Python versions!"
     exit 1
@@ -34,7 +34,7 @@ fi
 
 # Install essential Python tools
 print_info "Installing essential Python tools..."
-bash "$SCRIPT_DIR/install_python_tools.sh"
+bash "$PYTHON_SCRIPT_DIR/install_python_tools.sh"
 if [ $? -ne 0 ]; then
     print_warning "Some Python tools may not have installed correctly."
 fi
