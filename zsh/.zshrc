@@ -1,3 +1,16 @@
+# Only enable Powerlevel10k if starship is not available
+if ! command -v starship &> /dev/null; then
+  # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+  # Initialization code that may require console input (password prompts, [y/n]
+  # confirmations, etc.) must go above this block; everything else may go below.
+  if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+  fi
+else
+  # Disable P10k configuration wizard since we're using starship
+  POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+fi
+
 # .zshrc - Zsh Configuration File
 
 # History configuration
@@ -38,6 +51,13 @@ elif [[ -f ${ZDOTDIR:-$HOME}/.zsh_plugins.txt ]]; then
   echo "Generating static plugins file..."
   antidote bundle < ${ZDOTDIR:-$HOME}/.zsh_plugins.txt > ${ZDOTDIR:-$HOME}/.zsh_plugins.zsh
   source ${ZDOTDIR:-$HOME}/.zsh_plugins.zsh
+fi
+
+# Note: If you encounter conflicts with 'z' command, remove ~/.zsh_plugins.zsh to regenerate
+
+# Load Powerlevel10k as fallback if starship is not available
+if ! command -v starship &> /dev/null; then
+  antidote load romkatv/powerlevel10k
 fi
 
 # Completion system initialization (should be after plugin loading)
@@ -129,3 +149,9 @@ fh() {
 
 # Load custom user configurations if they exist
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# Only load P10k config if starship is not available
+if ! command -v starship &> /dev/null; then
+  [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+fi
