@@ -2,7 +2,7 @@
 # This file is sourced by both .bashrc and .zshrc
 
 # Basic navigation aliases
-alias cb='z ..'
+alias cb='z ..'   # cd back (go up one directory)
 alias cls='clear'
 alias gh='history | grep'
 
@@ -70,6 +70,9 @@ fi
 # Zoxide (cd alternative) - universal setup
 if command -v zoxide &> /dev/null; then
   # Note: eval "$(zoxide init <shell>)" should be done in shell-specific configs
-  alias cd='z'    # z is the zoxide alternative to cd
-  alias zz='z -'  # Go back to previous directory
+  # Zoxide provides 'z' command for smart directory jumping
+  alias zz='z -'   # Go back to previous directory
+  alias zh='z -l'  # Show zoxide history
+  # Uncomment the line below if you want to replace 'cd' with 'z'
+  # alias cd='z'
 fi 
