@@ -30,4 +30,9 @@ fi
 export TERM=xterm-256color
 
 # Set editor
-export EDITOR=nano
+export EDITOR=nano[ -s "/root/.jabba/jabba.sh" ] && source "/root/.jabba/jabba.sh"
+export JABBA_HOME="$HOME/.jabba"
+[ -s "$JABBA_HOME/jabba.sh" ] && source "$JABBA_HOME/jabba.sh"
+# Maven Daemon (mvnd)
+export MVND_HOME="/root/.mvnd/maven-mvnd-1.0.2-linux-amd64"
+export PATH="$MVND_HOME/bin:$PATH"
