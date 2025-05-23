@@ -308,7 +308,22 @@ install_dev_with_confirmation() {
   
   if ask_yes_no "Do you want to install $description development environment?" "$default"; then
     install_dev_environment "$env" "$description" "$force_run"
-    return $?
+    local result=$?
+    
+    # Special handling for Rust: source the environment immediately
+    if [ $result -eq 0 ] && [ "$env" = "rust" ]; then
+      print_info "Sourcing Rust environment for current session..."
+      source "$HOME/.cargo/env" 2>/dev/null || true
+      # Export RUST_INSTALLED flag for subsequent installers
+      export RUST_INSTALLED_THIS_SESSION="true"
+    fi
+    
+    # Export general flag for any dev environment installed this session
+    if [ $result -eq 0 ]; then
+      export "${env^^}_INSTALLED_THIS_SESSION"="true"
+    fi
+    
+    return $result
   else
     print_info "Skipping installation of $description development environment"
     # Still mark as completed but with "skipped" status
