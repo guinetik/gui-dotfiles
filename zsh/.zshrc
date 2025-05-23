@@ -55,81 +55,18 @@ fi
 # Enable correction
 setopt correct
 
-# Include useful aliases
-if [ -f ~/.aliases ]; then
-  source ~/.aliases
+# Source shared aliases
+if [ -f "$HOME/.config/shell/aliases.sh" ]; then
+  source "$HOME/.config/shell/aliases.sh"
 fi
 
-# Add aliases for directory management
+# Basic directory navigation aliases (in addition to shared ones)
 alias ..='cd ..'
 alias ...='cd ../..'
-alias ll='ls -la'
-alias la='ls -A'
-alias l='ls -CF'
-
-# Modern CLI tool aliases - if installed
-
-# exa (ls replacement)
-if command -v exa &> /dev/null; then
-  alias ls='exa'
-  alias ll='exa -la'
-  alias lt='exa -T'
-  alias la='exa -a'
-fi
-
-# bat (cat replacement)
-if command -v bat &> /dev/null; then
-  alias cat='bat'
-fi
-
-# ripgrep (grep replacement)
-if command -v rg &> /dev/null; then
-  alias grep='rg'
-  alias rgf='rg --files-with-matches'
-  alias rgh='rg --hidden'
-  alias rgl='rg -l'
-  alias rgc='rg --count'
-  alias rgn='rg --no-ignore'
-  alias rgj='rg --json'
-  alias find-code='rg --type py --type js --type html --type ts --type css'
-fi
-
-# fd (find replacement)
-if command -v fd &> /dev/null; then
-  alias find='fd'
-fi
-
-# dust (du replacement)
-if command -v dust &> /dev/null; then
-  alias du='dust'
-fi
-
-# procs (ps replacement)
-if command -v procs &> /dev/null; then
-  alias ps='procs'
-fi
-
-# bottom (top replacement)
-if command -v btm &> /dev/null; then
-  alias top='btm'
-fi
-
-# bandwhich (network monitoring)
-if command -v bandwhich &> /dev/null; then
-  alias netmon='bandwhich'
-fi
-
-# tldr (command examples)
-if command -v tldr &> /dev/null; then
-  alias help='tldr'
-fi
 
 # Zoxide (cd alternative) 
 if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
-  alias cd="z"
-  alias zz="z -"
-  alias zi="z -i"
 fi
 
 # Development environment setup
