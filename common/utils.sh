@@ -364,6 +364,37 @@ install_from_github() {
     if [ $result -eq 0 ]; then
       bash "./$filename" || result=$?
     fi
+  elif [[ "$filename" == *.appimage ]]; then
+    # Handle AppImage files - run them directly without extraction
+    print_info "Handling AppImage file: $filename"
+    chmod +x "$filename" || { result=1; print_error "Failed to make AppImage executable"; }
+    if [ $result -eq 0 ]; then
+      local install_target_name="$expected_binary_name"
+      if [ -z "$install_target_name" ]; then
+        # If expected_binary_name is empty, use the downloaded filename without .appimage extension
+        install_target_name=$(basename "$filename" .appimage)
+        print_warning "expected_binary_name was empty, using filename without extension: $install_target_name"
+      fi
+      
+      local target_path="$bin_path/$install_target_name"
+      
+      # Remove any existing file or dangling symlink at the target location
+      if [ -e "$target_path" ] || [ -L "$target_path" ]; then
+        print_info "Removing existing file/symlink at $target_path"
+        sudo rm -f "$target_path" || print_warning "Failed to remove existing $target_path"
+      fi
+      
+      print_info "Installing AppImage '$filename' as '$install_target_name' to $bin_path/"
+      sudo cp "$filename" "$target_path" || result=$?
+      
+      if [ $result -eq 0 ]; then
+        # Ensure the installed file is executable
+        sudo chmod +x "$target_path" || print_warning "Failed to ensure $target_path is executable"
+        print_success "Successfully installed AppImage as '$target_path'"
+      else
+        print_error "Failed to copy AppImage '$filename' to '$target_path'"
+      fi
+    fi
   else # This is for direct binaries or unknown types
     print_info "Handling direct binary or unknown file type: $filename"
     chmod +x "$filename" || { result=1; print_error "Failed to make '$filename' executable"; }
