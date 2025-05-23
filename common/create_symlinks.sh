@@ -13,13 +13,13 @@ print_info "Creating symlinks..."
 
 # Define symlinks to create
 SYMLINKS=(
-  "../bash/.bashrc:$HOME/.bashrc"
-  "../zsh/.zshrc:$HOME/.zshrc"
-  "../zsh/.zshenv:$HOME/.zshenv"
-  "../zsh/.zsh_plugins.txt:$HOME/.zsh_plugins.txt"
-  "../shell/aliases.sh:$HOME/.config/shell/aliases.sh"
-  "../starship/starship.toml:$HOME/.config/starship.toml"
-  "../git/.gitconfig:$HOME/.gitconfig"
+  "bash/.bashrc:$HOME/.bashrc"
+  "zsh/.zshrc:$HOME/.zshrc"
+  "zsh/.zshenv:$HOME/.zshenv"
+  "zsh/.zsh_plugins.txt:$HOME/.zsh_plugins.txt"
+  "shell/aliases.sh:$HOME/.config/shell/aliases.sh"
+  "starship/starship.toml:$HOME/.config/starship.toml"
+  "git/.gitconfig:$HOME/.gitconfig"
 )
 
 # Create symlinks
