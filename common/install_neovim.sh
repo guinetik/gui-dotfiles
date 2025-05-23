@@ -29,49 +29,53 @@ print_info "Installing Neovim dependencies..."
 pkg_manager=$(detect_pkg_manager)
 case "$pkg_manager" in
   "apt")
-    # Ubuntu/Debian
-    install_packages ninja-build gettext cmake unzip curl
+    # Ubuntu/Debian - Install basic dependencies for AppImage handling
+    install_packages curl file
     ;;
   "pacman")
-    # Arch
-    install_packages base-devel cmake unzip ninja curl
+    # Arch - Install basic dependencies for AppImage handling
+    install_packages curl file
     ;;
   *)
-    print_error "Unsupported distribution. Please install Neovim dependencies manually."
-    exit 1
+    print_warning "Unsupported distribution. Attempting to install Neovim anyway..."
     ;;
 esac
 
 # Install latest stable Neovim
-print_info "Installing latest stable Neovim..."
-case "$pkg_manager" in
-  "apt")
-    # For Ubuntu/Debian
-    install_packages software-properties-common
-    
-    # Add PPA and update repo
-    sudo add-apt-repository -y ppa:neovim-ppa/stable
-    update_pkg_repos
-    
-    # Install neovim
-    install_packages neovim
-    ;;
-  "pacman")
-    # For Arch
-    install_packages neovim
-    ;;
-  *)
-    # Build from source as fallback
-    print_info "Building Neovim from source..."
-    cd /tmp || exit 1
-    git clone https://github.com/neovim/neovim
-    cd neovim || exit 1
-    git checkout stable
-    make CMAKE_BUILD_TYPE=RelWithDebInfo
-    sudo make install
-    cd - || exit 1
-    ;;
-esac
+print_info "Installing latest stable Neovim from GitHub releases..."
+
+# Install Neovim from GitHub releases using AppImage
+if install_from_github "neovim/neovim" "nvim-linux-x86_64.appimage" "/usr/local/bin" "" "nvim"; then
+  print_success "Neovim installed successfully from GitHub AppImage!"
+else
+  print_error "Failed to install Neovim from GitHub AppImage. Trying fallback methods..."
+  
+  # Fallback to package manager installation
+  case "$pkg_manager" in
+    "apt")
+      # For Ubuntu/Debian - try to get a newer version via PPA
+      print_info "Attempting package manager installation with PPA..."
+      install_packages software-properties-common
+      
+      # Add PPA and update repo
+      sudo add-apt-repository -y ppa:neovim-ppa/stable 2>/dev/null || true
+      update_pkg_repos
+      
+      # Install neovim
+      install_packages neovim
+      ;;
+    "pacman")
+      # For Arch
+      print_info "Attempting package manager installation..."
+      install_packages neovim
+      ;;
+    *)
+      print_error "Unsupported distribution and GitHub installation failed."
+      print_error "Please install Neovim manually from https://github.com/neovim/neovim/releases"
+      exit 1
+      ;;
+  esac
+fi
 
 # Verify installation
 if verify_installation "Neovim" "command -v nvim"; then
