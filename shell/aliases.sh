@@ -72,5 +72,4 @@ if command -v zoxide &> /dev/null; then
   # Note: eval "$(zoxide init <shell>)" should be done in shell-specific configs
   alias cd='z'    # z is the zoxide alternative to cd
   alias zz='z -'  # Go back to previous directory
-  alias zi='zi'   # Interactive selection using fzf
 fi 
