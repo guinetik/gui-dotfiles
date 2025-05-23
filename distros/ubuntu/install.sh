@@ -318,6 +318,14 @@ install_dev_with_confirmation() {
       export RUST_INSTALLED_THIS_SESSION="true"
     fi
     
+    # Special handling for Java: source the Jabba environment immediately
+    if [ $result -eq 0 ] && [ "$env" = "java" ]; then
+      print_info "Sourcing Java environment for current session..."
+      source "$HOME/.jabba/jabba.sh" 2>/dev/null || true
+      # Export JAVA_INSTALLED flag for subsequent installers
+      export JAVA_INSTALLED_THIS_SESSION="true"
+    fi
+    
     # Export general flag for any dev environment installed this session
     if [ $result -eq 0 ]; then
       export "${env^^}_INSTALLED_THIS_SESSION"="true"
