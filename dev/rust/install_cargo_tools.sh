@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source common utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../common/utils.sh"
+CARGO_TOOLS_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "$CARGO_TOOLS_SCRIPT_DIR/../../common/utils.sh"
 
 # Install Cargo tools
 print_info "Installing Cargo tools for Rust development..."
@@ -13,7 +13,7 @@ source "$HOME/.cargo/env" 2>/dev/null || true
 # Check for Cargo
 if ! command -v cargo &> /dev/null; then
     print_error "Cargo not found. Make sure Rust is installed first."
-    return 1
+    exit 1
 fi
 
 # Install basic Rust components
@@ -56,4 +56,4 @@ for tool_entry in "${CARGO_TOOLS[@]}"; do
 done
 
 print_success "Cargo tools installation completed successfully!"
-return 0
+exit 0

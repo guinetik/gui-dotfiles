@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source common utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../common/utils.sh"
+RUSTUP_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "$RUSTUP_SCRIPT_DIR/../../common/utils.sh"
 
 # Install Rustup and Rust toolchain
 print_info "Installing Rustup and Rust toolchain..."
@@ -33,7 +33,7 @@ else
         create_install_tracker "rust" "$HOME/.local/share/gui-dotfiles" "$(rustc --version | cut -d' ' -f2)"
     else
         print_error "Failed to install Rust and Cargo"
-        return 1
+        exit 1
     fi
 fi
 
@@ -44,4 +44,4 @@ if ! grep -q 'source "$HOME/.cargo/env"' ~/.bashrc; then
 fi
 
 print_success "Rustup installation completed successfully!"
-return 0
+exit 0

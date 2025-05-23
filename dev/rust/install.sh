@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source common utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../common/utils.sh"
+RUST_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "$RUST_SCRIPT_DIR/../../common/utils.sh"
 
 # Rust Development Environment Setup
 print_info "Setting up Rust Development Environment..."
@@ -12,7 +12,7 @@ mkdir -p "$HOME/.local/share/gui-dotfiles"
 
 # Run individual installation scripts
 print_info "Installing Rustup and Rust toolchain..."
-bash "$SCRIPT_DIR/install_rustup.sh"
+bash "$RUST_SCRIPT_DIR/install_rustup.sh"
 if [ $? -ne 0 ]; then
     print_error "Failed to install Rustup!"
     exit 1
@@ -31,7 +31,7 @@ fi
 
 # Install Cargo tools
 print_info "Installing Cargo tools..."
-bash "$SCRIPT_DIR/install_cargo_tools.sh"
+bash "$RUST_SCRIPT_DIR/install_cargo_tools.sh"
 if [ $? -ne 0 ]; then
     print_error "Failed to install Cargo tools!"
     exit 1
