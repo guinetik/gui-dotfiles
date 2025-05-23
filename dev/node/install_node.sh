@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source common utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../common/utils.sh"
+NODE_INSTALL_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "$NODE_INSTALL_SCRIPT_DIR/../../common/utils.sh"
 
 # Install Node.js using NVM
 print_info "Installing latest Node.js version using NVM..."

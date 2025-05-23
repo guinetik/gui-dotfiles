@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source common utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../common/utils.sh"
+NVM_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "$NVM_SCRIPT_DIR/../../common/utils.sh"
 
 # Install NVM (Node Version Manager)
 print_info "Installing NVM (Node Version Manager)..."
@@ -45,13 +45,15 @@ curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
 
-# Verify installation
-if verify_installation "NVM" "command -v nvm"; then
+# Verify installation - NVM needs special handling since it's a shell function, not a binary
+print_info "Verifying NVM installation..."
+if [ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh" && command -v nvm &> /dev/null; then
   nvm_version=$(nvm --version)
   create_install_tracker "nvm" "$HOME/.local/share/gui-dotfiles" "$nvm_version"
-  print_success "NVM installed successfully!"
+  print_success "✅ NVM is correctly installed."
+  print_info "   Version: $nvm_version"
 else
-  print_error "NVM installation failed. Please check your internet connection and try again."
+  print_error "❌ NVM installation failed. Please check your internet connection and try again."
   exit 1
 fi
 

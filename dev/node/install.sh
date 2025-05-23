@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source common utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../common/utils.sh"
+NODE_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "$NODE_SCRIPT_DIR/../../common/utils.sh"
 
 # Node.js Development Environment Setup
 print_info "Setting up Node.js Development Environment..."
@@ -12,7 +12,7 @@ mkdir -p "$HOME/.local/share/gui-dotfiles"
 
 # Install NVM
 print_info "Installing NVM (Node Version Manager)..."
-bash "$SCRIPT_DIR/install_nvm.sh"
+bash "$NODE_SCRIPT_DIR/install_nvm.sh"
 if [ $? -ne 0 ]; then
     print_error "Failed to install NVM!"
     exit 1
@@ -24,7 +24,7 @@ export NVM_DIR="$HOME/.nvm"
 
 # Install Node.js
 print_info "Installing Node.js..."
-bash "$SCRIPT_DIR/install_node.sh"
+bash "$NODE_SCRIPT_DIR/install_node.sh"
 if [ $? -ne 0 ]; then
     print_error "Failed to install Node.js!"
     exit 1
