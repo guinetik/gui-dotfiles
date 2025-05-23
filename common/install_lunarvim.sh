@@ -33,17 +33,38 @@ print_info "Installing LunarVim dependencies..."
 
 # Check if cargo is available (Rust should be installed by now)
 if ! command -v cargo &> /dev/null; then
-  print_warning "Cargo is not available. Some LunarVim components may fail to install."
-  if ask_yes_no "Do you want to try installing Rust/Cargo now?" "y"; then
-    # Try to use the provided Rust installer
-    if [ -f "$LUNARVIM_SCRIPT_DIR/../dev/rust/install_rustup.sh" ]; then
-      print_info "Using Rust installer from dev environment..."
-      bash "$LUNARVIM_SCRIPT_DIR/../dev/rust/install_rustup.sh"
-    else
-      # Fallback to the utility function
-      ensure_rust
-    fi
+  # Try sourcing Rust environment in case it was just installed
+  if [ -f "$HOME/.cargo/env" ]; then
+    print_info "Attempting to source Rust environment..."
+    source "$HOME/.cargo/env" 2>/dev/null || true
   fi
+  
+  # Check again after sourcing
+  if ! command -v cargo &> /dev/null; then
+    # Check if Rust was installed in this session
+    if [ "$RUST_INSTALLED_THIS_SESSION" = "true" ]; then
+      print_warning "Rust was installed in this session but cargo is still not available."
+      print_info "This might be a PATH issue. Continuing with LunarVim installation..."
+    else
+      print_warning "Cargo is not available. Some LunarVim components may fail to install."
+      if ask_yes_no "Do you want to try installing Rust/Cargo now?" "y"; then
+        # Try to use the provided Rust installer
+        if [ -f "$LUNARVIM_SCRIPT_DIR/../dev/rust/install_rustup.sh" ]; then
+          print_info "Using Rust installer from dev environment..."
+          bash "$LUNARVIM_SCRIPT_DIR/../dev/rust/install_rustup.sh"
+          # Source the environment after installation
+          source "$HOME/.cargo/env" 2>/dev/null || true
+        else
+          # Fallback to the utility function
+          ensure_rust
+        fi
+      fi
+    fi
+  else
+    print_info "Cargo is now available after sourcing Rust environment."
+  fi
+else
+  print_info "Cargo is available."
 fi
 
 # Detect distribution
