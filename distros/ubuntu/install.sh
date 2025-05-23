@@ -249,8 +249,37 @@ install_dev_environment() {
     return 0
   fi
   
+  # Get the repository root directory - find it by looking for the dev directory
+  local repo_root=""
+  local current_dir="$SCRIPT_DIR"
+  
+  # Look for the repository root by checking for the dev directory
+  while [ "$current_dir" != "/" ]; do
+    if [ -d "$current_dir/dev" ] && [ -d "$current_dir/common" ]; then
+      repo_root="$current_dir"
+      break
+    fi
+    current_dir="$(cd "$current_dir/.." && pwd)"
+  done
+  
+  if [ -z "$repo_root" ]; then
+    print_error "Could not find repository root directory"
+    return 1
+  fi
+  
+  local dev_script="$repo_root/dev/$env/install.sh"
+  
   print_info "Installing $description development environment..."
-  bash "$SCRIPT_DIR/../../dev/$env/install.sh"
+  print_info "DEBUG: SCRIPT_DIR is: $SCRIPT_DIR"
+  print_info "DEBUG: repo_root calculated as: $repo_root"
+  print_info "DEBUG: Looking for script at: $dev_script"
+  
+  if [ ! -f "$dev_script" ]; then
+    print_error "Development environment script not found: $dev_script"
+    return 1
+  fi
+  
+  bash "$dev_script"
   
   if [ $? -eq 0 ]; then
     print_success "$description environment installed successfully!"
