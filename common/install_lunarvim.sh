@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source common utilities
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/utils.sh"
+LUNARVIM_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "$LUNARVIM_SCRIPT_DIR/utils.sh"
 
 # Install LunarVim
 print_info "Installing LunarVim..."
@@ -36,9 +36,9 @@ if ! command -v cargo &> /dev/null; then
   print_warning "Cargo is not available. Some LunarVim components may fail to install."
   if ask_yes_no "Do you want to try installing Rust/Cargo now?" "y"; then
     # Try to use the provided Rust installer
-    if [ -f "$SCRIPT_DIR/../dev/rust/install_rustup.sh" ]; then
+    if [ -f "$LUNARVIM_SCRIPT_DIR/../dev/rust/install_rustup.sh" ]; then
       print_info "Using Rust installer from dev environment..."
-      bash "$SCRIPT_DIR/../dev/rust/install_rustup.sh"
+      bash "$LUNARVIM_SCRIPT_DIR/../dev/rust/install_rustup.sh"
     else
       # Fallback to the utility function
       ensure_rust
@@ -93,22 +93,33 @@ mkdir -p ~/.config/lvim
 print_info "Installing LunarVim..."
 LV_BRANCH='release-1.3/neovim-0.9' bash <(curl -s https://raw.githubusercontent.com/LunarVim/LunarVim/release-1.3/neovim-0.9/utils/installer/install.sh)
 
-# Verify installation
-if verify_installation "LunarVim" "command -v lvim"; then
+# Add LunarVim to path if not already
+add_to_path "$HOME/.local/bin"
+
+# Also add to current session PATH for immediate verification
+export PATH="$HOME/.local/bin:$PATH"
+
+# Verify installation - check both the file exists and the command works
+print_info "Verifying LunarVim installation..."
+if [ -f "$HOME/.local/bin/lvim" ] && command -v lvim &> /dev/null; then
   # Create a backup of default config
   cp ~/.config/lvim/config.lua ~/.config/lvim/config.lua.bak 2>/dev/null || true
   
   # Create tracker file
   lvim_version="1.3" # Hard-coded since LunarVim doesn't have an easy version flag
   create_install_tracker "lunarvim" "$HOME/.local/share/gui-dotfiles" "$lvim_version"
-  print_success "LunarVim installed successfully!"
+  print_success "✅ LunarVim is correctly installed."
+  print_info "   LunarVim binary found at: $HOME/.local/bin/lvim"
 else
-  print_error "Failed to install LunarVim."
+  print_error "❌ LunarVim installation failed or is not working correctly."
+  if [ -f "$HOME/.local/bin/lvim" ]; then
+    print_info "LunarVim binary exists at $HOME/.local/bin/lvim but command verification failed."
+    print_info "This might be a PATH issue - try restarting your terminal."
+  else
+    print_error "LunarVim binary not found at expected location: $HOME/.local/bin/lvim"
+  fi
   exit 1
 fi
-
-# Add LunarVim to path if not already
-add_to_path "$HOME/.local/bin"
 
 print_info "You may need to restart your terminal or run 'source ~/.bashrc' to use LunarVim."
 print_info "Use 'lvim' command to start LunarVim"
