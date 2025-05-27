@@ -75,7 +75,7 @@ Version managers and tools for:
 Run the installation script:
 
 ```bash
-git clone https://github.com/yourusername/gui-dotfiles.git
+git clone https://github.com/guinetik/gui-dotfiles.git
 cd gui-dotfiles
 ./install.sh
 ```
