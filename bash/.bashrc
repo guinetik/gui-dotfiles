@@ -36,3 +36,9 @@ export JABBA_HOME="$HOME/.jabba"
 # Maven Daemon (mvnd)
 export MVND_HOME="/root/.mvnd/maven-mvnd-1.0.2-linux-amd64"
 export PATH="$MVND_HOME/bin:$PATH"
+
+# pyenv setup
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
