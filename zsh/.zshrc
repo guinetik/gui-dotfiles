@@ -1,4 +1,4 @@
-# Only enable Powerlevel10k if starship is not available
+# Only enable Powerlevel9k if starship is not available
 if ! command -v starship &> /dev/null; then
   # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
   # Initialization code that may require console input (password prompts, [y/n]
@@ -155,3 +155,17 @@ fh() {
 if ! command -v starship &> /dev/null; then
   [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 fi
+
+#VPS setup
+export GUINETIK_SERVER="45.32.174.122"
+export BWS_ACCESS_TOKEN="0.b6b3e709-6a95-42dc-8fd8-b36c0078dc60.JVOjV0v9CAAHDDNcV9wynr6iZo8RpX:FJj/X6sYYth7/xlSr16nag=="
+export GUINETIK_KEY="~/.ssh/email@guinetik.com"
+
+guinetikssh() {
+    if [ -n "$1" ]; then
+        ssh -i "$GUINETIK_KEY" "root@$GUINETIK_SERVER" "$@"
+    else
+        ssh -i "$GUINETIK_KEY" "root@$GUINETIK_SERVER"
+    fi
+}
+alias guinetikssh='guinetikssh'

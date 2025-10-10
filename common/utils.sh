@@ -365,7 +365,7 @@ install_from_github() {
       bash "./$filename" || result=$?
     fi
   elif [[ "$filename" == *.appimage ]]; then
-    # Handle AppImage files - run them directly without extraction
+    # Handle AppImage files
     print_info "Handling AppImage file: $filename"
     chmod +x "$filename" || { result=1; print_error "Failed to make AppImage executable"; }
     if [ $result -eq 0 ]; then
@@ -375,24 +375,102 @@ install_from_github() {
         install_target_name=$(basename "$filename" .appimage)
         print_warning "expected_binary_name was empty, using filename without extension: $install_target_name"
       fi
-      
+
       local target_path="$bin_path/$install_target_name"
-      
+
       # Remove any existing file or dangling symlink at the target location
       if [ -e "$target_path" ] || [ -L "$target_path" ]; then
         print_info "Removing existing file/symlink at $target_path"
         sudo rm -f "$target_path" || print_warning "Failed to remove existing $target_path"
       fi
-      
-      print_info "Installing AppImage '$filename' as '$install_target_name' to $bin_path/"
-      sudo cp "$filename" "$target_path" || result=$?
-      
-      if [ $result -eq 0 ]; then
-        # Ensure the installed file is executable
-        sudo chmod +x "$target_path" || print_warning "Failed to ensure $target_path is executable"
-        print_success "Successfully installed AppImage as '$target_path'"
+
+      # Check if we're in WSL or if FUSE is not available
+      # Try to detect WSL environment
+      local is_wsl=false
+      if grep -qEi "(Microsoft|WSL)" /proc/version 2>/dev/null || [ -n "${WSL_DISTRO_NAME}" ]; then
+        is_wsl=true
+        print_info "Detected WSL environment - will extract AppImage instead of mounting"
+      fi
+
+      # Try to run the AppImage to test if FUSE works, if not WSL
+      local fuse_works=true
+      if [ "$is_wsl" = false ]; then
+        if ! "./$filename" --version &>/dev/null; then
+          print_warning "AppImage cannot run (FUSE may not be available)"
+          fuse_works=false
+        fi
       else
-        print_error "Failed to copy AppImage '$filename' to '$target_path'"
+        fuse_works=false
+      fi
+
+      # If FUSE doesn't work or we're in WSL, extract the AppImage
+      if [ "$fuse_works" = false ]; then
+        print_info "Extracting AppImage contents..."
+        "./$filename" --appimage-extract &>/dev/null || {
+          print_error "Failed to extract AppImage"
+          result=1
+        }
+
+        if [ $result -eq 0 ] && [ -d "squashfs-root" ]; then
+          # Find the main executable in squashfs-root
+          local main_binary=""
+
+          # Common locations for the main binary in extracted AppImages
+          # Prefer actual binaries over AppRun to avoid relative path issues
+          if [ -f "squashfs-root/usr/bin/$install_target_name" ]; then
+            main_binary="squashfs-root/usr/bin/$install_target_name"
+          elif [ -f "squashfs-root/bin/$install_target_name" ]; then
+            main_binary="squashfs-root/bin/$install_target_name"
+          elif [ -f "squashfs-root/AppRun" ]; then
+            # AppRun as fallback (may have relative path issues)
+            main_binary="squashfs-root/AppRun"
+          else
+            # Try to find any executable that matches the expected name
+            main_binary=$(find squashfs-root -type f -name "$install_target_name" -executable | head -1)
+          fi
+
+          if [ -n "$main_binary" ] && [ -f "$main_binary" ]; then
+            print_info "Found binary: $main_binary"
+            print_info "Installing extracted binary to $target_path"
+            sudo cp "$main_binary" "$target_path" || result=$?
+
+            if [ $result -eq 0 ]; then
+              sudo chmod +x "$target_path" || print_warning "Failed to ensure $target_path is executable"
+
+              # For Neovim and similar apps, also copy runtime files if they exist
+              if [ "$install_target_name" = "nvim" ] && [ -d "squashfs-root/usr/share/nvim" ]; then
+                print_info "Copying Neovim runtime files..."
+                sudo mkdir -p /usr/local/share/nvim
+                sudo cp -r squashfs-root/usr/share/nvim/* /usr/local/share/nvim/ || print_warning "Failed to copy some runtime files"
+                print_success "Neovim runtime files copied to /usr/local/share/nvim/"
+              fi
+
+              print_success "Successfully installed extracted AppImage binary as '$target_path'"
+            else
+              print_error "Failed to copy extracted binary to '$target_path'"
+            fi
+          else
+            print_error "Could not find main binary in extracted AppImage"
+            print_info "Contents of squashfs-root:"
+            ls -la squashfs-root/ 2>/dev/null || true
+            result=1
+          fi
+
+          # Clean up extracted directory
+          rm -rf squashfs-root
+        fi
+      else
+        # FUSE works, install AppImage directly
+        print_info "Installing AppImage '$filename' as '$install_target_name' to $bin_path/"
+        sudo cp "$filename" "$target_path" || result=$?
+
+        if [ $result -eq 0 ]; then
+          # Ensure the installed file is executable
+          sudo chmod +x "$target_path" || print_warning "Failed to ensure $target_path is executable"
+          print_success "Successfully installed AppImage as '$target_path'"
+        else
+          print_error "Failed to copy AppImage '$filename' to '$target_path'"
+        fi
       fi
     fi
   else # This is for direct binaries or unknown types

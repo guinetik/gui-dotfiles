@@ -1,4 +1,4 @@
-# ~/.bashrc
+/~/.ssh/email@guinetik.com# ~/.bashrc
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -42,3 +42,17 @@ export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
+
+#VPS setup
+export GUINETIK_SERVER = "45.32.174.122"
+export BWS_ACCESS_TOKEN = "0.b6b3e709-6a95-42dc-8fd8-b36c0078dc60.JVOjV0v9CAAHDDNcV9wynr6iZo8RpX:FJj/X6sYYth7/xlSr16nag=="
+export GUINETIK_KEY = "~/.ssh/email@guinetik.com"
+
+guinetikssh() {
+    if [ -n "$1" ]; then
+        ssh -i "$GUINETIK_KEY" "root@$GUINETIK_SERVER" "$@"
+    else
+        ssh -i "$GUINETIK_KEY" "root@$GUINETIK_SERVER"
+    fi
+}
+alias gssh='guinetikssh'

@@ -41,14 +41,57 @@ case "$pkg_manager" in
     ;;
 esac
 
-# Install latest stable Neovim
-print_info "Installing latest stable Neovim from GitHub releases..."
+# Install Neovim v0.9.5 for compatibility with LunarVim 1.3
+print_info "Installing Neovim v0.9.5 from GitHub releases (compatible with LunarVim 1.3)..."
 
-# Install Neovim from GitHub releases using AppImage
-if install_from_github "neovim/neovim" "nvim-linux-x86_64.appimage" "/usr/local/bin" "" "nvim"; then
-  print_success "Neovim installed successfully from GitHub AppImage!"
+# Download and extract tarball
+NEOVIM_VERSION="v0.9.5"
+NEOVIM_URL="https://github.com/neovim/neovim/releases/download/${NEOVIM_VERSION}/nvim-linux64.tar.gz"
+TMP_DIR=$(mktemp -d)
+cd "$TMP_DIR" || exit 1
+
+print_info "Downloading Neovim ${NEOVIM_VERSION}..."
+curl -L -o nvim-linux64.tar.gz "$NEOVIM_URL" || {
+  print_error "Failed to download Neovim"
+  cd - &>/dev/null
+  rm -rf "$TMP_DIR"
+  exit 1
+}
+
+print_info "Extracting Neovim..."
+tar xzf nvim-linux64.tar.gz || {
+  print_error "Failed to extract Neovim"
+  cd - &>/dev/null
+  rm -rf "$TMP_DIR"
+  exit 1
+}
+
+print_info "Installing Neovim to /usr/local..."
+# Copy each directory individually to avoid conflicts
+sudo cp -r nvim-linux64/bin/* /usr/local/bin/ 2>/dev/null || true
+sudo cp -r nvim-linux64/lib/* /usr/local/lib/ 2>/dev/null || true
+sudo mkdir -p /usr/local/share/nvim
+sudo cp -r nvim-linux64/share/nvim/* /usr/local/share/nvim/ 2>/dev/null || true
+
+if [ -d "nvim-linux64/man" ]; then
+  # Handle man pages carefully
+  for mandir in nvim-linux64/man/man*; do
+    if [ -d "$mandir" ]; then
+      manname=$(basename "$mandir")
+      sudo mkdir -p "/usr/local/share/man/$manname"
+      sudo cp -r "$mandir"/* "/usr/local/share/man/$manname/" 2>/dev/null || true
+    fi
+  done
+fi
+
+# Clean up
+cd - &>/dev/null
+rm -rf "$TMP_DIR"
+
+if command -v nvim &> /dev/null; then
+  print_success "Neovim installed successfully from GitHub tarball!"
 else
-  print_error "Failed to install Neovim from GitHub AppImage. Trying fallback methods..."
+  print_error "Failed to install Neovim from GitHub tarball. Trying fallback methods..."
   
   # Fallback to package manager installation
   case "$pkg_manager" in
