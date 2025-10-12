@@ -148,12 +148,23 @@ show_completion_message() {
 
   print_success "GUI Dotfiles installed successfully!"
   print_info "Installed ${COMPONENT_COUNT} components/scripts"
-  print_info "Please restart your shell or run: source ~/.bashrc"
   print_info ""
   print_info "To reinstall or update in the future, run with options:"
   print_info "./install.sh --force    # Force reinstall all components"
   print_info "./install.sh --yolo     # Install everything without prompts"
   print_info "./install.sh --force --yolo  # Reinstall everything automatically"
+  echo ""
+
+  # Offer to restart the shell to apply all changes
+  print_warning "A shell restart is recommended to apply all configurations."
+  echo ""
+  if ask_yes_no "Restart your shell now to apply all changes?" "y"; then
+    print_info "Restarting shell..."
+    exec "$SHELL" -l
+  else
+    print_info "Please restart your shell manually or run:"
+    print_info "source ~/.bashrc  # or ~/.zshrc"
+  fi
 }
 
 # Run the main function

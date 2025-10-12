@@ -35,10 +35,16 @@ main() {
   
   # Additional CLI tools
   install_additional_tools
-  
+
+  # Infrastructure & Services
+  install_infrastructure_services
+
   # Development environments
   install_development_environments
-  
+
+  # Global npm packages (requires Node.js)
+  install_npm_global_packages
+
   # Shell configuration
   configure_shell
   
@@ -47,7 +53,10 @@ main() {
   
   # Create symlinks
   setup_symlinks
-  
+
+  # Guinetik backend provisioning
+  setup_guinetik_backend
+
   # Show completion summary
   show_completion_message
 }
@@ -79,7 +88,7 @@ install_essential_tools() {
   
   # Essential installations (no confirmation needed)
   run_script "install_packages.sh" "$FORCE_RUN"
-  run_script "install_exa.sh" "$FORCE_RUN"
+  run_script "install_eza.sh" "$FORCE_RUN"
   run_script "install_zoxide.sh" "$FORCE_RUN"
   run_script "install_ripgrep.sh" "$FORCE_RUN"
 }
@@ -89,10 +98,27 @@ install_essential_tools() {
 #
 install_additional_tools() {
   print_section "Additional CLI Tools"
-  
+
   run_script_with_confirmation "install_tokei.sh" "Tokei (code statistics tool)" "y" "$FORCE_RUN"
   run_script_with_confirmation "install_modern_tools.sh" "Modern CLI replacements" "y" "$FORCE_RUN"
+  run_script_with_confirmation "install_fzf_git.sh" "FZF + Git integration" "y" "$FORCE_RUN"
+  run_script_with_confirmation "install_atuin.sh" "Atuin (shell history management)" "y" "$FORCE_RUN"
+  run_script_with_confirmation "install_superfile.sh" "Superfile (terminal file manager)" "y" "$FORCE_RUN"
+  run_script_with_confirmation "install_w3m.sh" "w3m (text-based web browser)" "y" "$FORCE_RUN"
+  run_script_with_confirmation "install_googler.sh" "googler (Google search from CLI)" "y" "$FORCE_RUN"
   run_script_with_confirmation "install_starship.sh" "Starship prompt" "y" "$FORCE_RUN"
+}
+
+#
+# Install infrastructure and services
+#
+install_infrastructure_services() {
+  print_section "Infrastructure & Services"
+
+  run_script_with_confirmation "install_docker.sh" "Docker Engine & Docker Compose" "y" "$FORCE_RUN"
+  run_script_with_confirmation "install_powershell.sh" "PowerShell (pwsh)" "n" "$FORCE_RUN"
+  run_script_with_confirmation "install_bitwarden_bws.sh" "Bitwarden Secrets CLI (bws)" "n" "$FORCE_RUN"
+  run_script_with_confirmation "install_openssh_server.sh" "OpenSSH Server" "n" "$FORCE_RUN"
 }
 
 #
@@ -112,6 +138,39 @@ install_development_environments() {
 }
 
 #
+# Install global npm packages
+#
+install_npm_global_packages() {
+  # Only run if Node.js was installed
+  if ! command -v npm &> /dev/null && ! command -v node &> /dev/null; then
+    print_info "Node.js is not installed. Skipping global npm packages."
+    return 0
+  fi
+
+  local script_id="npm_global_packages"
+
+  # Check if already run (unless force run)
+  if [[ "$FORCE_RUN" != "true" ]] && should_skip_script "$script_id"; then
+    print_info "Global npm packages already installed. Skipping."
+    return 0
+  fi
+
+  print_section "Global NPM Packages"
+
+  # Run the npm packages script with YOLO_MODE passed through
+  export YOLO_MODE
+  bash "../../common/install_npm_global_packages.sh"
+
+  if [ $? -eq 0 ]; then
+    mark_script_completed "$script_id" "1.0"
+    return 0
+  else
+    print_warning "Some npm packages may have failed to install"
+    return 0  # Don't fail the entire installation
+  fi
+}
+
+#
 # Configure shell (Bash/Zsh)
 #
 configure_shell() {
@@ -128,8 +187,9 @@ configure_shell() {
 #
 install_editors() {
   print_section "Editors and IDEs"
-  
-  run_script_with_confirmation "install_neovim_lunarvim.sh" "Neovim & LunarVim" "y" "$FORCE_RUN"
+
+  run_script_with_confirmation "install_micro.sh" "Micro (modern terminal editor)" "y" "$FORCE_RUN"
+  run_script_with_confirmation "install_neovim_lunarvim.sh" "Neovim & LunarVim" "n" "$FORCE_RUN"
 }
 
 #
@@ -152,53 +212,135 @@ setup_symlinks() {
 }
 
 #
+# Setup Guinetik backend provisioning
+#
+setup_guinetik_backend() {
+  local script_id="guinetik_backend_provisioning"
+
+  # Check if already configured (unless force run)
+  if [[ "$FORCE_RUN" != "true" ]] && should_skip_script "$script_id"; then
+    print_info "Guinetik backend already provisioned. Skipping."
+    return 0
+  fi
+
+  print_section "Guinetik Backend Provisioning"
+
+  # In YOLO mode, skip this (too sensitive for auto-config)
+  if [[ "$YOLO_MODE" == "true" ]]; then
+    print_info "YOLO mode enabled but skipping Guinetik setup (requires manual configuration)"
+    return 0
+  fi
+
+  if ask_yes_no "Do you want to provision Guinetik backend environment?" "n"; then
+    print_info "Running Guinetik provisioning script..."
+
+    # Get the repository root directory
+    local repo_root=""
+    local current_dir="$SCRIPT_DIR"
+
+    while [ "$current_dir" != "/" ]; do
+      if [ -d "$current_dir/common" ]; then
+        repo_root="$current_dir"
+        break
+      fi
+      current_dir="$(cd "$current_dir/.." && pwd)"
+    done
+
+    if [ -z "$repo_root" ]; then
+      print_error "Could not find repository root directory"
+      return 1
+    fi
+
+    local guinetik_script="$repo_root/common/install_guinetik.sh"
+
+    if [ ! -f "$guinetik_script" ]; then
+      print_error "Guinetik provisioning script not found: $guinetik_script"
+      return 1
+    fi
+
+    # Run with explicit terminal for interactive input
+    bash "$guinetik_script" </dev/tty
+
+    if [ $? -eq 0 ]; then
+      print_success "Guinetik backend provisioned successfully!"
+      mark_script_completed "$script_id" "1.0"
+      return 0
+    else
+      print_error "Guinetik backend provisioning failed"
+      return 1
+    fi
+  else
+    print_info "Skipping Guinetik backend provisioning"
+    mark_script_completed "${script_id}_skipped" "1.0"
+    return 0
+  fi
+}
+
+#
 # Show completion message and summary
 #
 show_completion_message() {
   print_header "Installation Complete!"
   print_success "Dotfiles installed successfully!"
-  
+
   # Mark overall installation as completed
   mark_script_completed "ubuntu_dotfiles_installation" "1.0"
-  
+
   # Display installation summary
   echo ""
   print_info "Installation Summary:"
-  list_installed_components | grep -v "^#" | column -t -s"|"
+  if command -v column &>/dev/null; then
+    list_installed_components | grep -v "^#" | column -t -s"|"
+  else
+    list_installed_components | grep -v "^#"
+  fi
   echo ""
-  
-  print_info "Please restart your shell or run:"
-  print_info "source ~/.bashrc"
-  echo ""
+
   print_info "To reinstall or update, run with flags:"
   print_info "./install.sh --force    # Force reinstall all components"
   print_info "./install.sh --yolo     # Install everything without prompts"
   print_info "./install.sh --force --yolo  # Reinstall everything automatically"
   echo ""
+
+  # Offer to restart the shell to apply all changes
+  print_warning "A shell restart is recommended to apply all configurations."
+  echo ""
+  if ask_yes_no "Restart your shell now to apply all changes?" "y"; then
+    print_info "Restarting shell..."
+    exec "$SHELL" -l
+  else
+    print_info "Please restart your shell manually or run:"
+    print_info "source ~/.bashrc  # or ~/.zshrc"
+  fi
 }
 
 # Function to run a script and log its execution
+# First checks common/, then falls back to local scripts/
 run_script() {
   local script=$1
-  local script_path="./scripts/${script}"
-  local script_id="ubuntu_scripts_${script%.*}"
   local force_run="${2:-false}"
-  
-  # Check if the script exists
-  if [ ! -f "$script_path" ]; then
-    print_error "Script not found: ${script_path}"
+  local script_id="ubuntu_scripts_${script%.*}"
+
+  # Try common scripts first, then local scripts
+  local script_path
+  if [ -f "../../common/${script}" ]; then
+    script_path="../../common/${script}"
+  elif [ -f "./scripts/${script}" ]; then
+    script_path="./scripts/${script}"
+  else
+    print_error "Script not found: ${script}"
     return 1
   fi
-  
+
   # Check if script should be skipped (already completed)
   if [[ "$force_run" != "true" ]] && should_skip_script "$script_id"; then
     print_info "Skipping: ${script} (already completed)"
     return 0
   fi
-  
+
   print_info "Running: ${script}"
   bash "$script_path"
-  
+
   # Check if the script executed successfully
   if [ $? -eq 0 ]; then
     print_success "Completed: ${script}"

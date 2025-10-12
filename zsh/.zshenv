@@ -23,3 +23,4 @@ export XDG_CACHE_HOME="$HOME/.cache"
 # Ensure various bin directories are in PATH
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
+. "$HOME/.cargo/env"

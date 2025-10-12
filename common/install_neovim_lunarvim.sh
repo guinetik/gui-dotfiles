@@ -2,7 +2,7 @@
 
 # Source common utilities
 NEOVIM_LUNARVIM_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$NEOVIM_LUNARVIM_SCRIPT_DIR/../../../common/utils.sh"
+source "$NEOVIM_LUNARVIM_SCRIPT_DIR/utils.sh"
 
 # Install Neovim and LunarVim
 print_info "Installing Neovim and LunarVim..."
@@ -18,9 +18,9 @@ if ! command -v cargo &> /dev/null; then
     print_info "Rust/Cargo is required for LunarVim. Installing Rust..."
     if ask_yes_no "Do you want to install Rust (required for LunarVim)?" "y"; then
         # Try to use the Rust dev environment if available
-        if [ -f "$NEOVIM_LUNARVIM_SCRIPT_DIR/../../../dev/rust/install_rustup.sh" ]; then
+        if [ -f "$NEOVIM_LUNARVIM_SCRIPT_DIR/../dev/rust/install_rustup.sh" ]; then
             print_info "Using Rust installer from dev environment..."
-            bash "$NEOVIM_LUNARVIM_SCRIPT_DIR/../../../dev/rust/install_rustup.sh"
+            bash "$NEOVIM_LUNARVIM_SCRIPT_DIR/../dev/rust/install_rustup.sh"
         else
             # Fallback to the utility function
             ensure_rust
@@ -39,21 +39,21 @@ fi
 
 # Use the common scripts with proper error checking
 print_info "Installing Neovim..."
-bash "$NEOVIM_LUNARVIM_SCRIPT_DIR/../../../common/install_neovim.sh"
+bash "$NEOVIM_LUNARVIM_SCRIPT_DIR/install_neovim.sh"
 if [ $? -ne 0 ]; then
     print_error "Neovim installation failed!"
     exit 1
 fi
 
 print_info "Installing LunarVim..."
-bash "$NEOVIM_LUNARVIM_SCRIPT_DIR/../../../common/install_lunarvim.sh"
+bash "$NEOVIM_LUNARVIM_SCRIPT_DIR/install_lunarvim.sh"
 if [ $? -ne 0 ]; then
     print_error "LunarVim installation failed!"
     exit 1
 fi
 
 print_info "Setting up LunarVim configuration..."
-bash "$NEOVIM_LUNARVIM_SCRIPT_DIR/../../../common/setup_lunarvim_config.sh"
+bash "$NEOVIM_LUNARVIM_SCRIPT_DIR/setup_lunarvim_config.sh"
 if [ $? -ne 0 ]; then
     print_error "LunarVim configuration failed!"
     exit 1

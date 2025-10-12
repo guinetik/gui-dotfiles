@@ -3,9 +3,31 @@
 # Common Package Management Functions
 # This script provides unified functions for package management across different distributions
 
+# Get the correct sudo path (avoid Windows sudo.exe in WSL)
+get_sudo_cmd() {
+  # Try common Linux locations first
+  if [ -x /usr/bin/sudo ]; then
+    echo "/usr/bin/sudo"
+  elif [ -x /bin/sudo ]; then
+    echo "/bin/sudo"
+  else
+    # Find Linux sudo, not Windows sudo
+    local sudo_path=$(command -v sudo 2>/dev/null | grep -v "\.exe$" | head -1)
+    if [ -n "$sudo_path" ] && [[ "$sudo_path" != *".exe"* ]]; then
+      echo "$sudo_path"
+    else
+      # Last resort
+      echo "sudo"
+    fi
+  fi
+}
+
+# Cache sudo command
+SUDO_CMD=$(get_sudo_cmd)
+
 # Determine the package manager
 detect_pkg_manager() {
-  if command -v apt &> /dev/null; then
+  if command -v apt-get &> /dev/null || command -v apt &> /dev/null; then
     echo "apt"
   elif command -v pacman &> /dev/null; then
     echo "pacman"
@@ -21,27 +43,42 @@ detect_pkg_manager() {
 # Update package repositories
 update_pkg_repos() {
   local pkg_manager=$(detect_pkg_manager)
-  
+  local exit_code=0
+
   echo "Updating package repositories..."
+  echo "----------------------------------------"
+
   case "$pkg_manager" in
     "apt")
-      sudo apt update
+      $SUDO_CMD apt-get update
+      exit_code=$?
       ;;
     "pacman")
-      sudo pacman -Sy
+      $SUDO_CMD pacman -Sy
+      exit_code=$?
       ;;
     "dnf")
-      sudo dnf check-update
+      $SUDO_CMD dnf check-update
+      exit_code=$?
       ;;
     "zypper")
-      sudo zypper refresh
+      $SUDO_CMD zypper refresh
+      exit_code=$?
       ;;
     *)
       echo "Unsupported package manager. Please update manually."
       return 1
       ;;
   esac
-  
+
+  echo "----------------------------------------"
+
+  if [ $exit_code -ne 0 ]; then
+    echo "Repository update failed with exit code: $exit_code"
+    return $exit_code
+  fi
+
+  echo "Repository update completed successfully"
   return 0
 }
 
@@ -49,44 +86,50 @@ update_pkg_repos() {
 install_pkg() {
   local packages=("$@")
   local pkg_manager=$(detect_pkg_manager)
-  local install_output
   local exit_code=0
-  
+
   if [ ${#packages[@]} -eq 0 ]; then
     echo "No packages specified."
     return 1
   fi
-  
+
   echo "Installing packages: ${packages[*]}"
+  echo "----------------------------------------"
+
+  # Run installation with real-time output
   case "$pkg_manager" in
     "apt")
-      install_output=$(sudo apt install -y "${packages[@]}" 2>&1) || exit_code=$?
+      # Use DEBIAN_FRONTEND=noninteractive to prevent interactive prompts
+      DEBIAN_FRONTEND=noninteractive $SUDO_CMD apt-get install -y "${packages[@]}"
+      exit_code=$?
       ;;
     "pacman")
-      install_output=$(sudo pacman -S --noconfirm "${packages[@]}" 2>&1) || exit_code=$?
+      $SUDO_CMD pacman -S --noconfirm "${packages[@]}"
+      exit_code=$?
       ;;
     "dnf")
-      install_output=$(sudo dnf install -y "${packages[@]}" 2>&1) || exit_code=$?
+      $SUDO_CMD dnf install -y "${packages[@]}"
+      exit_code=$?
       ;;
     "zypper")
-      install_output=$(sudo zypper install -y "${packages[@]}" 2>&1) || exit_code=$?
+      $SUDO_CMD zypper install -y "${packages[@]}"
+      exit_code=$?
       ;;
     *)
       echo "Unsupported package manager. Please install packages manually."
       return 1
       ;;
   esac
-  
-  # Display the installation output
-  echo "$install_output"
-  
-  # For apt, check for "E: Unable to locate package" message
-  if [[ "$pkg_manager" == "apt" && "$install_output" == *"E: Unable to locate package"* ]]; then
-    return 1
-  fi
-  
+
+  echo "----------------------------------------"
+
   # Check exit code
-  return $exit_code
+  if [ $exit_code -ne 0 ]; then
+    echo "Package installation failed with exit code: $exit_code"
+    return $exit_code
+  fi
+
+  return 0
 }
 
 # Check if a package is installed

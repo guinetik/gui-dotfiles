@@ -298,20 +298,20 @@ install_from_github() {
               chmod +x "$binary_to_install" || print_warning "Failed to chmod +x $binary_to_install"
             fi
             print_info "Installing $binary_to_install to $bin_path/"
-            sudo cp "$binary_to_install" "$bin_path/" || result=$?
-            
+            /usr/bin/sudo cp "$binary_to_install" "$bin_path/" || result=$?
+
             # If the copied name isn't the expected_binary_name, and expected_binary_name is meaningful, create symlink.
             local found_binary_basename=$(basename "$binary_to_install")
             if [ -n "$expected_binary_name" ] && [ "$found_binary_basename" != "$expected_binary_name" ]; then
                 print_info "Symlinking $bin_path/$found_binary_basename to $bin_path/$expected_binary_name"
-                sudo ln -sf "$bin_path/$found_binary_basename" "$bin_path/$expected_binary_name"
+                /usr/bin/sudo ln -sf "$bin_path/$found_binary_basename" "$bin_path/$expected_binary_name"
             fi
           elif [ -n "$expected_binary_name" ] && [ -f "${search_path}/${expected_binary_name}" ]; then
             # This case means it was found by name, but was not executable and chmod failed above, or initial find didn't pick it up.
             print_info "Found '${search_path}/${expected_binary_name}' but it seems it could not be made executable or copied. Attempting direct copy."
             chmod +x "${search_path}/${expected_binary_name}" || { print_error "Failed to make ${search_path}/${expected_binary_name} executable"; result=1; }
             if [ $result -eq 0 ]; then
-              sudo cp "${search_path}/${expected_binary_name}" "$bin_path/" || result=$?
+              /usr/bin/sudo cp "${search_path}/${expected_binary_name}" "$bin_path/" || result=$?
             fi 
           else
             print_warning "No executable found, and expected binary '${expected_binary_name:-not specified}' not present in ${search_path}."
@@ -347,7 +347,7 @@ install_from_github() {
           if [ -n "$binary" ]; then
             # Ensure binary path is correct if it was found in current dir (search_dir=".")
             # or in a subdirectory.
-            sudo cp "$binary" "$bin_path/" || result=$?
+            /usr/bin/sudo cp "$binary" "$bin_path/" || result=$?
           else
             print_warning "No executable found in extracted files (searched in '$tmp_dir/$search_dir')"
             result=1
@@ -356,9 +356,9 @@ install_from_github() {
       fi
     fi
   elif [[ "$filename" == *.deb ]]; then
-    sudo dpkg -i "$filename" || result=$?
+    /usr/bin/sudo dpkg -i "$filename" || result=$?
   elif [[ "$filename" == *.rpm ]]; then
-    sudo rpm -i "$filename" || result=$?
+    /usr/bin/sudo rpm -i "$filename" || result=$?
   elif [[ "$filename" == *.sh ]]; then
     chmod +x "$filename" || { result=1; print_error "Failed to make script executable"; }
     if [ $result -eq 0 ]; then
@@ -381,7 +381,7 @@ install_from_github() {
       # Remove any existing file or dangling symlink at the target location
       if [ -e "$target_path" ] || [ -L "$target_path" ]; then
         print_info "Removing existing file/symlink at $target_path"
-        sudo rm -f "$target_path" || print_warning "Failed to remove existing $target_path"
+        /usr/bin/sudo rm -f "$target_path" || print_warning "Failed to remove existing $target_path"
       fi
 
       # Check if we're in WSL or if FUSE is not available
@@ -432,16 +432,16 @@ install_from_github() {
           if [ -n "$main_binary" ] && [ -f "$main_binary" ]; then
             print_info "Found binary: $main_binary"
             print_info "Installing extracted binary to $target_path"
-            sudo cp "$main_binary" "$target_path" || result=$?
+            /usr/bin/sudo cp "$main_binary" "$target_path" || result=$?
 
             if [ $result -eq 0 ]; then
-              sudo chmod +x "$target_path" || print_warning "Failed to ensure $target_path is executable"
+              /usr/bin/sudo chmod +x "$target_path" || print_warning "Failed to ensure $target_path is executable"
 
               # For Neovim and similar apps, also copy runtime files if they exist
               if [ "$install_target_name" = "nvim" ] && [ -d "squashfs-root/usr/share/nvim" ]; then
                 print_info "Copying Neovim runtime files..."
-                sudo mkdir -p /usr/local/share/nvim
-                sudo cp -r squashfs-root/usr/share/nvim/* /usr/local/share/nvim/ || print_warning "Failed to copy some runtime files"
+                /usr/bin/sudo mkdir -p /usr/local/share/nvim
+                /usr/bin/sudo cp -r squashfs-root/usr/share/nvim/* /usr/local/share/nvim/ || print_warning "Failed to copy some runtime files"
                 print_success "Neovim runtime files copied to /usr/local/share/nvim/"
               fi
 
@@ -462,11 +462,11 @@ install_from_github() {
       else
         # FUSE works, install AppImage directly
         print_info "Installing AppImage '$filename' as '$install_target_name' to $bin_path/"
-        sudo cp "$filename" "$target_path" || result=$?
+        /usr/bin/sudo cp "$filename" "$target_path" || result=$?
 
         if [ $result -eq 0 ]; then
           # Ensure the installed file is executable
-          sudo chmod +x "$target_path" || print_warning "Failed to ensure $target_path is executable"
+          /usr/bin/sudo chmod +x "$target_path" || print_warning "Failed to ensure $target_path is executable"
           print_success "Successfully installed AppImage as '$target_path'"
         else
           print_error "Failed to copy AppImage '$filename' to '$target_path'"
@@ -485,7 +485,7 @@ install_from_github() {
       fi
       
       print_info "Installing '$filename' as '$install_target_name' to $bin_path/"
-      sudo cp "$filename" "$bin_path/$install_target_name" || result=$?
+      /usr/bin/sudo cp "$filename" "$bin_path/$install_target_name" || result=$?
       
       if [ $result -eq 0 ] && [ "$filename" != "$install_target_name" ]; then
           # If the original filename was different and we copied it to expected_binary_name,
@@ -581,7 +581,7 @@ install_tool_with_fallbacks() {
   # 3. If previous methods fail, try snap if it's available
   if [ "$install_success" = "false" ] && command -v snap &> /dev/null; then
     print_info "Attempting snap installation for $package_name..."
-    if sudo snap install "$package_name" 2>/dev/null; then
+    if /usr/bin/sudo snap install "$package_name" 2>/dev/null; then
       if command -v "$binary_name" &> /dev/null; then
         print_success "Installed $package_name using snap."
         install_success=true
@@ -626,27 +626,32 @@ INSTALL_MASTER_FILE="$INSTALL_TRACKER_DIR/.installed"
 
 # Initialize installation tracking environment
 init_install_tracking() {
+  # Debug output
+  print_info "DEBUG: INSTALL_TRACKER_DIR=${INSTALL_TRACKER_DIR}"
+  print_info "DEBUG: INSTALL_MASTER_FILE=${INSTALL_MASTER_FILE}"
+  print_info "DEBUG: HOME=${HOME}"
+
   # Create tracking directory if it doesn't exist
   mkdir -p "$INSTALL_TRACKER_DIR" || {
     print_error "Failed to create tracking directory: $INSTALL_TRACKER_DIR"
-    # Don't exit - we'll just operate without tracking
     return 1
   }
-  
+
   # Create master tracking file if it doesn't exist
   if [ ! -f "$INSTALL_MASTER_FILE" ]; then
-    {
-      echo "# GUI Dotfiles - Installation Tracking" 
-      echo "# Format: component_name|version|status|timestamp"
-      echo "# File generated on $(date '+%Y-%m-%d %H:%M:%S')"
-      echo "dotfiles_initialized|1.0|completed|$(date '+%Y-%m-%d %H:%M:%S')"
-    } > "$INSTALL_MASTER_FILE" || {
+    print_info "DEBUG: Creating master file at: $INSTALL_MASTER_FILE"
+    echo "# GUI Dotfiles - Installation Tracking" > "$INSTALL_MASTER_FILE" || {
       print_error "Failed to create master tracking file: $INSTALL_MASTER_FILE"
-      # Don't exit - we'll just operate without tracking
+      print_error "DEBUG: pwd=$(pwd)"
+      print_error "DEBUG: ls -la $(dirname "$INSTALL_MASTER_FILE")"
+      ls -la "$(dirname "$INSTALL_MASTER_FILE")" || true
       return 1
     }
+    echo "# Format: component_name|version|status|timestamp" >> "$INSTALL_MASTER_FILE"
+    echo "# File generated on $(date '+%Y-%m-%d %H:%M:%S')" >> "$INSTALL_MASTER_FILE"
+    echo "dotfiles_initialized|1.0|completed|$(date '+%Y-%m-%d %H:%M:%S')" >> "$INSTALL_MASTER_FILE"
   fi
-  
+
   return 0
 }
 
@@ -655,45 +660,17 @@ mark_script_completed() {
   local script_name="$1"
   local script_version="${2:-1.0}"
   local date_completed=$(date '+%Y-%m-%d %H:%M:%S')
-  
+
   # Initialize tracking if needed
   init_install_tracking
-  
-  # Try to safely update the file with awk - this is more reliable than sed
+
+  # Simple append if not exists
   if [ -f "$INSTALL_MASTER_FILE" ]; then
-    # Create a temporary file
-    local tmp_file="${INSTALL_MASTER_FILE}.tmp"
-    
-    # Use awk to find and update the entry, or pass through unchanged lines
-    awk -F'|' -v name="$script_name" -v version="$script_version" -v timestamp="$date_completed" \
-      'BEGIN { OFS="|" } 
-       $1 == name { print name, version, "completed", timestamp; next } 
-       { print }' "$INSTALL_MASTER_FILE" > "$tmp_file" 2>/dev/null || {
-      # If awk fails, fall back to simpler approach
-      print_warning "Failed to update tracking file with awk, using simpler approach"
-      cp "$INSTALL_MASTER_FILE" "$tmp_file" 2>/dev/null
-    }
-    
-    # Check if the script was found in the file
-    if grep -q "^${script_name}|" "$tmp_file" 2>/dev/null; then
-      # Entry was updated, move temp file to master file
-      mv "$tmp_file" "$INSTALL_MASTER_FILE" 2>/dev/null || true
-    else
-      # Entry wasn't found, add it to the file
-      echo "${script_name}|${script_version}|completed|${date_completed}" >> "$INSTALL_MASTER_FILE" 2>/dev/null || true
-      # Remove the temp file
-      rm -f "$tmp_file" 2>/dev/null || true
+    if ! grep -q "^${script_name}|" "$INSTALL_MASTER_FILE"; then
+      echo "${script_name}|${script_version}|completed|${date_completed}" >> "$INSTALL_MASTER_FILE" || true
     fi
-  else
-    # File doesn't exist yet, create it with just this entry
-    {
-      echo "# GUI Dotfiles - Installation Tracking"
-      echo "# Format: component_name|version|status|timestamp"
-      echo "# File generated on $(date '+%Y-%m-%d %H:%M:%S')"
-      echo "${script_name}|${script_version}|completed|${date_completed}"
-    } > "$INSTALL_MASTER_FILE" 2>/dev/null || true
   fi
-  
+
   print_info "Marked script '$script_name' as completed"
 }
 
@@ -733,55 +710,26 @@ create_install_tracker() {
   local version="$3"
   local date_installed
   date_installed=$(date +"%Y-%m-%d %H:%M:%S")
-  
+
+  print_info "DEBUG: create_install_tracker called for $app_name"
+
   # Initialize tracking
   init_install_tracking
-  
+
   # Create or update tracker file
-  cat > "$install_dir/$app_name.info" << EOF 2>/dev/null || true
-app_name=$app_name
-version=$version
-date_installed="$date_installed"
-EOF
-  
-  # Add to master tracking file using the same awk approach
+  echo "app_name=$app_name" > "$install_dir/$app_name.info" || true
+  echo "version=$version" >> "$install_dir/$app_name.info" || true
+  echo "date_installed=\"$date_installed\"" >> "$install_dir/$app_name.info" || true
+
+  # Add to master tracking file
   local component_name="component_${app_name}"
-  
-  # Try to safely update the file with awk
+
   if [ -f "$INSTALL_MASTER_FILE" ]; then
-    # Create a temporary file
-    local tmp_file="${INSTALL_MASTER_FILE}.tmp"
-    
-    # Use awk to find and update the entry, or pass through unchanged lines
-    awk -F'|' -v name="$component_name" -v version="$version" -v timestamp="$date_installed" \
-      'BEGIN { OFS="|" } 
-       $1 == name { print name, version, "completed", timestamp; next } 
-       { print }' "$INSTALL_MASTER_FILE" > "$tmp_file" 2>/dev/null || {
-      # If awk fails, fall back to simpler approach
-      print_warning "Failed to update tracking file with awk, using simpler approach"
-      cp "$INSTALL_MASTER_FILE" "$tmp_file" 2>/dev/null
-    }
-    
-    # Check if the component was found in the file
-    if grep -q "^${component_name}|" "$tmp_file" 2>/dev/null; then
-      # Entry was updated, move temp file to master file
-      mv "$tmp_file" "$INSTALL_MASTER_FILE" 2>/dev/null || true
-    else
-      # Entry wasn't found, add it to the file
-      echo "${component_name}|${version}|completed|${date_installed}" >> "$INSTALL_MASTER_FILE" 2>/dev/null || true
-      # Remove the temp file
-      rm -f "$tmp_file" 2>/dev/null || true
+    if ! grep -q "^${component_name}|" "$INSTALL_MASTER_FILE"; then
+      echo "${component_name}|${version}|completed|${date_installed}" >> "$INSTALL_MASTER_FILE" || true
     fi
-  else
-    # File doesn't exist yet, create it with just this entry
-    {
-      echo "# GUI Dotfiles - Installation Tracking"
-      echo "# Format: component_name|version|status|timestamp"
-      echo "# File generated on $(date '+%Y-%m-%d %H:%M:%S')"
-      echo "${component_name}|${version}|completed|${date_installed}"
-    } > "$INSTALL_MASTER_FILE" 2>/dev/null || true
   fi
-  
+
   print_info "Created installation tracker for $app_name version $version"
 }
 
@@ -972,3 +920,4 @@ export -f show_menu
 
 # Export variables
 export INSTALL_TRACKER_DIR
+export INSTALL_MASTER_FILE

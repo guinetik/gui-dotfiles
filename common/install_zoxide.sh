@@ -2,7 +2,7 @@
 
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../../common/utils.sh"
+source "$SCRIPT_DIR/utils.sh"
 
 # Install zoxide (smarter cd command)
 print_info "Installing zoxide (smarter cd command)..."
@@ -33,11 +33,23 @@ if ! install_packages zoxide; then
   curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
 fi
 
+# Add ~/.local/bin to PATH if not already there (zoxide installs there)
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+  export PATH="$HOME/.local/bin:$PATH"
+fi
+
 # Verify installation
-if verify_installation "zoxide" "command -v zoxide"; then
-  zoxide_version=$(zoxide --version | cut -d' ' -f2)
+if command -v zoxide &> /dev/null || [ -x "$HOME/.local/bin/zoxide" ]; then
+  # Get version
+  if command -v zoxide &> /dev/null; then
+    zoxide_version=$(zoxide --version 2>&1 | grep -oP 'zoxide \K[0-9.]+' || echo "unknown")
+  else
+    zoxide_version="unknown"
+  fi
+
   create_install_tracker "zoxide" "$HOME/.local/share/gui-dotfiles" "$zoxide_version"
   print_success "zoxide installed successfully!"
+  print_info "zoxide version: $zoxide_version"
 else
   print_error "zoxide installation failed!"
   exit 1
