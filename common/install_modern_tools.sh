@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Source common utilities
-MODERN_TOOLS_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$MODERN_TOOLS_SCRIPT_DIR/../../../common/utils.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+source "$SCRIPT_DIR/utils.sh"
 
 # Install modern CLI tools
 print_info "Installing modern CLI tools..."

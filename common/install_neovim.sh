@@ -68,18 +68,18 @@ tar xzf nvim-linux64.tar.gz || {
 
 print_info "Installing Neovim to /usr/local..."
 # Copy each directory individually to avoid conflicts
-sudo cp -r nvim-linux64/bin/* /usr/local/bin/ 2>/dev/null || true
-sudo cp -r nvim-linux64/lib/* /usr/local/lib/ 2>/dev/null || true
-sudo mkdir -p /usr/local/share/nvim
-sudo cp -r nvim-linux64/share/nvim/* /usr/local/share/nvim/ 2>/dev/null || true
+/usr/bin/sudo cp -r nvim-linux64/bin/* /usr/local/bin/ 2>/dev/null || true
+/usr/bin/sudo cp -r nvim-linux64/lib/* /usr/local/lib/ 2>/dev/null || true
+/usr/bin/sudo mkdir -p /usr/local/share/nvim
+/usr/bin/sudo cp -r nvim-linux64/share/nvim/* /usr/local/share/nvim/ 2>/dev/null || true
 
 if [ -d "nvim-linux64/man" ]; then
   # Handle man pages carefully
   for mandir in nvim-linux64/man/man*; do
     if [ -d "$mandir" ]; then
       manname=$(basename "$mandir")
-      sudo mkdir -p "/usr/local/share/man/$manname"
-      sudo cp -r "$mandir"/* "/usr/local/share/man/$manname/" 2>/dev/null || true
+      /usr/bin/sudo mkdir -p "/usr/local/share/man/$manname"
+      /usr/bin/sudo cp -r "$mandir"/* "/usr/local/share/man/$manname/" 2>/dev/null || true
     fi
   done
 fi
@@ -101,7 +101,7 @@ else
       install_packages software-properties-common
       
       # Add PPA and update repo
-      sudo add-apt-repository -y ppa:neovim-ppa/stable 2>/dev/null || true
+      /usr/bin/sudo add-apt-repository -y ppa:neovim-ppa/stable 2>/dev/null || true
       update_pkg_repos
       
       # Install neovim

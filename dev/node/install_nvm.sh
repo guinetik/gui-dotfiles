@@ -35,11 +35,25 @@ fi
 ensure_command curl
 
 # Get the latest NVM version
-NVM_VERSION=$(curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | grep -Po '"tag_name": "\K[^"]*')
+print_info "Fetching latest NVM version..."
+NVM_VERSION=$(curl -s https://api.github.com/repos/nvm-sh/nvm/releases/latest | grep -oP '"tag_name":\s*"\K[^"]+' || echo "")
+
+# If version detection failed, use a known stable version
+if [ -z "$NVM_VERSION" ]; then
+  print_warning "Could not detect latest NVM version from GitHub API"
+  NVM_VERSION="v0.39.7"  # Fallback to a known stable version
+  print_info "Using fallback version: $NVM_VERSION"
+else
+  print_info "Latest NVM version: $NVM_VERSION"
+fi
+
 print_info "Installing NVM version $NVM_VERSION..."
 
 # Install NVM
-curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" | bash
+if ! curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" | bash; then
+  print_error "Failed to download or execute NVM installer"
+  exit 1
+fi
 
 # Source NVM for immediate use
 export NVM_DIR="$HOME/.nvm"

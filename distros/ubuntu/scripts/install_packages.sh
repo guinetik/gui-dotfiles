@@ -8,7 +8,27 @@ source "$SCRIPT_DIR/../../../common/utils.sh"
 print_info "Installing necessary basic packages..."
 
 # Define required packages
-BASIC_PACKAGES=("curl" "git" "zsh" "wget" "unzip" "fzf" "jq")
+BASIC_PACKAGES=(
+  "curl"
+  "git"
+  "zsh"
+  "wget"
+  "unzip"
+  "fzf"
+  "jq"
+  "sudo"
+  "build-essential"
+  "net-tools"
+  "iproute2"
+  "less"
+  "vim"
+  "dos2unix"
+  "ca-certificates"
+  "gnupg"
+  "lsb-release"
+  "software-properties-common"
+  "apt-transport-https"
+)
 
 # Update package repositories
 update_pkg_repos

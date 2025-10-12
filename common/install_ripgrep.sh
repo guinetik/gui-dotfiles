@@ -2,7 +2,7 @@
 
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../../common/utils.sh"
+source "$SCRIPT_DIR/utils.sh"
 
 # Install ripgrep (fast regex-based search tool)
 print_info "Installing ripgrep (fast regex-based search tool)..."
@@ -30,7 +30,7 @@ if ! install_packages ripgrep; then
   install_from_github "BurntSushi/ripgrep" "ripgrep-.*-x86_64-unknown-linux-musl.tar.gz" "/usr/local/bin" '
     local dir=$(find . -type d -name "ripgrep-*-x86_64-unknown-linux-musl" | head -1)
     if [ -n "$dir" ]; then
-      sudo cp "$dir/rg" /usr/local/bin/
+      /usr/bin/sudo cp "$dir/rg" /usr/local/bin/
     fi
   '
 fi

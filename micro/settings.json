@@ -1,0 +1,19 @@
+{
+    "colorscheme": "darcula",
+    "autosu": true,
+    "mkparents": true,
+    "softwrap": true,
+    "scrollbar": true,
+    "diffgutter": true,
+    "savecursor": true,
+    "saveundo": true,
+    "mouse": true,
+    "tabsize": 4,
+    "tabstospaces": true,
+    "clipboard": "terminal",
+    "syntax": true,
+    "autosave": 0,
+    "pluginchannels": [
+        "https://raw.githubusercontent.com/micro-editor/plugin-channel/master/channel.json"
+    ]
+}

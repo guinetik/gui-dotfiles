@@ -2,7 +2,7 @@
 
 # Source common utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-source "$SCRIPT_DIR/../../../common/utils.sh"
+source "$SCRIPT_DIR/utils.sh"
 
 # Install tokei (code statistics tool)
 print_info "Installing tokei (code statistics tool)..."

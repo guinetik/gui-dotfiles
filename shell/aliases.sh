@@ -6,14 +6,22 @@ alias cb='z ..'   # cd back (go up one directory)
 alias cls='clear'
 alias gh='history | grep'
 
-# Exa (ls replacement) - comprehensive aliases
-if command -v exa &> /dev/null; then
-  alias ls='exa'
-  alias ll='exa -la'
-  alias lt='exa -T --git-ignore'      # Tree view
-  alias lg='exa -l --git'             # Show git status
-  alias lh='exa -la --sort=modified'  # Show latest modified files
-  alias la='exa -a'
+# Eza/Exa (ls replacement) - comprehensive aliases
+# Eza is the maintained fork of exa, check for both
+if command -v eza &> /dev/null; then
+  alias ls='eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions'
+  alias ll='eza -la --icons=always --git'
+  alias lt='eza -T --git-ignore --icons=always'      # Tree view
+  alias lg='eza -l --git --icons=always'             # Show git status
+  alias lh='eza -la --sort=modified --icons=always'  # Show latest modified files
+  alias la='eza -a --icons=always'
+elif command -v exa &> /dev/null; then
+  alias ls='exa --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions'
+  alias ll='exa -la --icons=always --git'
+  alias lt='exa -T --git-ignore --icons=always'      # Tree view
+  alias lg='exa -l --git --icons=always'             # Show git status
+  alias lh='exa -la --sort=modified --icons=always'  # Show latest modified files
+  alias la='exa -a --icons=always'
 fi
 
 # Bat (cat/less replacement)
@@ -75,4 +83,14 @@ if command -v zoxide &> /dev/null; then
   alias zh='z -l'  # Show zoxide history
   # Uncomment the line below if you want to replace 'cd' with 'z'
   # alias cd='z'
+fi
+
+# Oxker (Docker TUI) - use custom config
+if command -v oxker &> /dev/null; then
+  # Detect the dotfiles directory
+  if [ -f "$HOME/gui-dotfiles/oxker/oxker.config.jsonc" ]; then
+    alias oxker='oxker --config-file "$HOME/gui-dotfiles/oxker/oxker.config.jsonc"'
+  elif [ -f "$HOME/.config/gui-dotfiles/oxker/oxker.config.jsonc" ]; then
+    alias oxker='oxker --config-file "$HOME/.config/gui-dotfiles/oxker/oxker.config.jsonc"'
+  fi
 fi 
