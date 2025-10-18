@@ -30,7 +30,18 @@ main() {
   # Process arguments
   parse_arguments "$@"
   
-  # Essential CLI tools
+  # Install zsh and basic packages FIRST
+  print_section "Installing Zsh and Basic Packages"
+  run_script "install_packages.sh" "$FORCE_RUN"
+  
+  # Create symlinks for shell configuration files
+  # This ensures .zsh_plugins.txt exists when we generate the plugin cache
+  setup_symlinks
+
+  # Configure shell (Zsh with Antidote) immediately after symlinks
+  configure_shell
+  
+  # Essential CLI tools (excluding packages which were already installed)
   install_essential_tools
   
   # Additional CLI tools
@@ -45,14 +56,8 @@ main() {
   # Global npm packages (requires Node.js)
   install_npm_global_packages
 
-  # Shell configuration
-  configure_shell
-  
   # Editors and IDEs
   install_editors
-  
-  # Create symlinks
-  setup_symlinks
 
   # Guinetik backend provisioning
   setup_guinetik_backend
@@ -87,7 +92,7 @@ install_essential_tools() {
   print_section "Installing Essential CLI Tools"
   
   # Essential installations (no confirmation needed)
-  run_script "install_packages.sh" "$FORCE_RUN"
+  # Note: install_packages.sh is now run at the very beginning of main()
   run_script "install_eza.sh" "$FORCE_RUN"
   run_script "install_zoxide.sh" "$FORCE_RUN"
   run_script "install_ripgrep.sh" "$FORCE_RUN"
@@ -107,6 +112,7 @@ install_additional_tools() {
   run_script_with_confirmation "install_w3m.sh" "w3m (text-based web browser)" "y" "$FORCE_RUN"
   run_script_with_confirmation "install_googler.sh" "googler (Google search from CLI)" "y" "$FORCE_RUN"
   run_script_with_confirmation "install_starship.sh" "Starship prompt" "y" "$FORCE_RUN"
+  run_script_with_confirmation "install_nushell.sh" "Nushell (modern shell)" "n" "$FORCE_RUN"
 }
 
 #

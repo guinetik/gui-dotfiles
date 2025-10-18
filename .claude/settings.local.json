@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//home/guinetik/**)",
+      "Bash(zsh:*)",
+      "Bash(zoxide:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
