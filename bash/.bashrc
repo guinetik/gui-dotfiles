@@ -1,4 +1,10 @@
-/~/.ssh/email@guinetik.com# ~/.bashrc
+# ~/.bashrc
+
+# Auto-launch zsh if available and in interactive session
+if [ -t 1 ] && command -v zsh &> /dev/null; then
+    export SHELL=$(which zsh)
+    exec zsh
+fi
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then
@@ -119,3 +125,12 @@ alias guinetikapi="guinetik-login"
 # END GUINETIK CONFIG
 . "$HOME/.cargo/env"
 source "$HOME/.cargo/env"
+[ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+
+. "$HOME/.atuin/bin/env"
+export MVND_HOME="/home/guinetik/.mvnd/maven-mvnd-1.0.3-linux-amd64"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+export PATH="/home/guinetik/.local/bin:$PATH"

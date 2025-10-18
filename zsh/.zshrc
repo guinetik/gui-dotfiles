@@ -41,6 +41,11 @@ if [[ ! -d $ANTIDOTE_HOME ]]; then
   echo "Antidote not found. Installing..."
   git clone --depth=1 https://github.com/mattmc3/antidote.git ${ANTIDOTE_HOME}
 fi
+
+# Set ZSH_CACHE_DIR for Oh-My-Zsh plugins compatibility
+export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+mkdir -p "$ZSH_CACHE_DIR/completions"
+
 source ${ANTIDOTE_HOME}/antidote.zsh
 
 # Load plugins (static)
@@ -59,6 +64,9 @@ fi
 if ! command -v starship &> /dev/null; then
   antidote load romkatv/powerlevel10k
 fi
+
+# Add custom completion functions directory
+fpath=(~/.zfunc $fpath)
 
 # Completion system initialization (should be after plugin loading)
 autoload -Uz compinit
@@ -80,21 +88,28 @@ if [ -f "$HOME/.config/shell/aliases.sh" ]; then
   source "$HOME/.config/shell/aliases.sh"
 fi
 
+# Zoxide (better cd)
+# Smart directory jumping with 'z' command
+# Must be loaded after compinit
+if command -v zoxide &> /dev/null; then
+  # Fix for old zoxide versions: define _z_cd before eval to avoid recursion
+  _z_cd() {
+    builtin cd "$@" || return "$?"
+    if [ "$_ZO_ECHO" = "1" ]; then
+      echo "$PWD"
+    fi
+  }
+  # Load zoxide but skip the broken _z_cd definition
+  eval "$(zoxide init zsh | sed '/_z_cd()/,/^}/d')"
+fi
+
 # Basic directory navigation aliases (in addition to shared ones)
 alias ..='cd ..'
 alias ...='cd ../..'
 
-# Zoxide (better cd)
-if command -v zoxide &> /dev/null; then
-  eval "$(zoxide init zsh)"
-  alias cd="z"
-fi
-
 # ---- FZF Configuration ----
-# Set up fzf key bindings and fuzzy completion
-if command -v fzf &> /dev/null; then
-  eval "$(fzf --zsh)"
-fi
+# FZF key bindings and completion are loaded via junegunn/fzf plugin in .zsh_plugins.txt
+# This provides Ctrl+T, Ctrl+R, and Alt+C shortcuts, plus ** tab completion
 
 # Use fd instead of find for FZF
 if command -v fd &> /dev/null; then
@@ -174,7 +189,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # Pyenv (Python Version Manager)
-if command -v pyenv &> /dev/null; then
+# Only use Linux pyenv, not Windows pyenv-win in WSL
+if [ -d "$HOME/.pyenv" ] && [ -f "$HOME/.pyenv/bin/pyenv" ]; then
   export PYENV_ROOT="$HOME/.pyenv"
   export PATH="$PYENV_ROOT/bin:$PATH"
   eval "$(pyenv init --path)"
@@ -191,6 +207,12 @@ fi
 [ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
 
 # Custom functions
+
+# Reload zsh configuration
+newsession() {
+  source ~/.zshrc
+  echo "✓ Zsh configuration reloaded"
+}
 
 # Create a directory and cd into it
 mkcd() {
@@ -268,7 +290,6 @@ guinetikssh() {
         ssh -i "$GUINETIK_KEY" "root@$GUINETIK_SERVER"
     fi
 }
-alias guinetikssh="guinetikssh"
 
 # API login function
 guinetik-login() {
@@ -297,3 +318,5 @@ guinetik-login() {
 
 alias guinetikapi="guinetik-login"
 # END GUINETIK CONFIG
+
+. "$HOME/.atuin/bin/env"

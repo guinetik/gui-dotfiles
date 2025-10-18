@@ -114,8 +114,8 @@ if (Test-Path $ImagePath) {
     Write-Info "Found existing image: $ImagePath"
     Write-Info "Existing image size: $([math]::Round($existingSize, 2)) MB"
 
-    # Verify the file is not corrupted (minimum 50MB expected)
-    if ($existingSize -gt 50) {
+    # Verify the file is not corrupted (minimum 20MB expected for compressed cloud image)
+    if ($existingSize -gt 20) {
         Write-Success "Using cached image (skipping download)"
         $skipDownload = $true
     } else {
