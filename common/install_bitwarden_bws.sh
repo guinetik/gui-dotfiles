@@ -22,31 +22,23 @@ if is_app_installed "bitwarden-bws"; then
   fi
 fi
 
-# Set version to install (update as needed)
-BWS_VERSION="0.4.0"
+# Use official Bitwarden installer (ensures latest version with 'run' command)
+print_info "Installing Bitwarden Secrets CLI using official installer..."
+curl -fsSL https://bws.bitwarden.com/install | sh
 
-print_info "Downloading Bitwarden Secrets CLI v${BWS_VERSION}..."
-wget "https://github.com/bitwarden/sdk/releases/download/bws-v${BWS_VERSION}/bws-x86_64-unknown-linux-gnu-${BWS_VERSION}.zip" -O /tmp/bws.zip
-
-if [ ! -f /tmp/bws.zip ]; then
-  print_error "Failed to download Bitwarden Secrets CLI!"
+if [ $? -ne 0 ]; then
+  print_error "Failed to install Bitwarden Secrets CLI!"
   exit 1
 fi
 
-# Extract and install
-print_info "Installing bws to /usr/local/bin..."
-unzip -o /tmp/bws.zip -d /tmp/
-chmod +x /tmp/bws
-/usr/bin/sudo mv /tmp/bws /usr/local/bin/bws
-rm /tmp/bws.zip
-
 # Verify installation
 if verify_installation "bitwarden-bws" "command -v bws"; then
-  bws_version=$(bws --version 2>&1 | grep -oP '\d+\.\d+\.\d+' | head -1 || echo "$BWS_VERSION")
+  bws_version=$(bws --version 2>&1 | grep -oP '\d+\.\d+\.\d+' | head -1 || echo "unknown")
   create_install_tracker "bitwarden-bws" "$HOME/.local/share/gui-dotfiles" "$bws_version"
   print_success "Bitwarden Secrets CLI installed successfully!"
   print_info "bws version: $bws_version"
   print_info "Usage: bws --help"
+  print_info "Note: The 'bws run' command is now available for injecting secrets"
 else
   print_error "Bitwarden Secrets CLI installation failed!"
   exit 1

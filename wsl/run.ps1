@@ -287,7 +287,24 @@ Write-Success "Sudo configuration verified - user '$UserName' has NOPASSWD sudo 
 # Link repository to WSL home directory
 Write-Header "Linking Repository"
 
-$repoPath = $PWD.Path
+# Find git repository root (works from any subdirectory)
+$scriptDir = $PSScriptRoot
+if (-not $scriptDir) {
+    $scriptDir = $PWD.Path
+}
+
+# Navigate up to find .git directory
+$repoPath = $scriptDir
+while ($repoPath -and -not (Test-Path (Join-Path $repoPath ".git"))) {
+    $parent = Split-Path -Parent $repoPath
+    if ($parent -eq $repoPath) {
+        # Reached filesystem root without finding .git
+        Write-Error "Could not find git repository root. Are you inside gui-dotfiles?"
+        exit 1
+    }
+    $repoPath = $parent
+}
+
 $repoPathWSL = $repoPath -replace '\\', '/' -replace 'C:', '/mnt/c' -replace 'D:', '/mnt/d' -replace 'E:', '/mnt/e'
 
 Write-Info "Repository path: $repoPath"

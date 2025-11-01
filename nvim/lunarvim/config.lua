@@ -13,6 +13,27 @@ lvim.leader = "space"
 vim.opt.relativenumber = true -- Relative line numbers
 vim.opt.wrap = false -- No line wrapping
 
+-- Transparency function
+function Transparent(color)
+  color = color or "tokyonight"
+  vim.cmd.colorscheme(color)
+
+  -- Main windows
+  vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+  vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+
+  -- Sidebar and tree transparency
+  vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+  vim.api.nvim_set_hl(0, "NvimTreeNormal", { bg = "none" })
+  vim.api.nvim_set_hl(0, "NvimTreeNormalNC", { bg = "none" })
+  vim.api.nvim_set_hl(0, "NvimTreeEndOfBuffer", { bg = "none" })
+
+  -- Statusline transparency (optional)
+  -- vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
+  -- vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
+end
+Transparent()
+
 -- Key Mappings
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
@@ -47,24 +68,24 @@ lvim.builtin.which_key.mappings["f"] = {
 -- Add additional lsp servers for various languages
 local lsp_servers = {
   -- Python
-  "pyright",
-  
+  -- "pyright",  -- Commented out - install via :Mason if needed
+
   -- JavaScript
   "tsserver",
   "eslint",
-  
+
   -- Rust
   "rust_analyzer",
-  
-  -- Java 
+
+  -- Java
   "jdtls",
-  
+
   -- Bash
   "bashls",
 }
 
--- Configure automatic installation
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "jdtls" })
+-- Configure automatic installation - skip pyright and jdtls
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "jdtls", "pyright" })
 
 -- Formatters setup
 local formatters = require "lvim.lsp.null-ls.formatters"
@@ -113,6 +134,23 @@ lvim.plugins = {
   
   -- Terminal Integration
   { "akinsho/toggleterm.nvim", version = "*", config = true },
+
+  -- AI Integration
+  { "greggh/claude-code.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    config = function()
+      require("claude-code").setup({
+        -- Disable auto keymaps due to Neovim 0.9.5 compatibility
+        setup_keymaps = false,
+      })
+
+      -- Manual keymaps for Neovim 0.9.5
+      vim.keymap.set('n', '<C-,>', ':ClaudeCode<CR>', { noremap = true, silent = true, desc = "Toggle Claude Code" })
+      vim.keymap.set('t', '<C-,>', '<C-\\><C-n>:ClaudeCode<CR>', { noremap = true, silent = true, desc = "Toggle Claude Code" })
+    end
+  },
 }
 
 -- Auto setup for plugins
