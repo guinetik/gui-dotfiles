@@ -27,6 +27,11 @@ if [ -f "$HOME/.config/shell/aliases.sh" ]; then
     source "$HOME/.config/shell/aliases.sh"
 fi
 
+# Source shared functions
+if [ -f "$HOME/.config/shell/functions.sh" ]; then
+    source "$HOME/.config/shell/functions.sh"
+fi
+
 # Enable starship prompt
 if command -v starship &> /dev/null; then
   eval "$(starship init bash)"
@@ -136,3 +141,12 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="/home/guinetik/.local/bin:$PATH"
 export PATH="/home/guinetik/.local/bin:$PATH"
 export PATH="/home/guinetik/.local/bin:$PATH"
+
+# Bun - added by gui-dotfiles
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Go (Golang) - added by gui-dotfiles
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
