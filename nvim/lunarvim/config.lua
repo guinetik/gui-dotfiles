@@ -144,6 +144,11 @@ lvim.plugins = {
       require("claude-code").setup({
         -- Disable auto keymaps due to Neovim 0.9.5 compatibility
         setup_keymaps = false,
+        -- Open Claude Code in vertical split on the right
+        window = {
+          position = "vertical",
+          split_ratio = 0.4, -- 40% width for Claude
+        },
       })
 
       -- Manual keymaps for Neovim 0.9.5
