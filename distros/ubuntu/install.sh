@@ -47,6 +47,9 @@ main() {
   # Additional CLI tools
   install_additional_tools
 
+  # Multimedia & Document tools
+  install_multimedia_tools
+
   # Infrastructure & Services
   install_infrastructure_services
 
@@ -55,6 +58,9 @@ main() {
 
   # Global npm packages (requires Node.js)
   install_npm_global_packages
+
+  # Global Bun packages (requires Bun)
+  install_bun_global_packages
 
   # Editors and IDEs
   install_editors
@@ -116,12 +122,24 @@ install_additional_tools() {
 }
 
 #
+# Install multimedia and document tools
+#
+install_multimedia_tools() {
+  print_section "Multimedia & Document Tools"
+
+  run_script_with_confirmation "install_ffmpeg.sh" "FFmpeg (multimedia framework - video/audio processing)" "n" "$FORCE_RUN"
+  run_script_with_confirmation "install_imagemagick.sh" "ImageMagick (image manipulation toolkit)" "n" "$FORCE_RUN"
+  run_script_with_confirmation "install_latex.sh" "LaTeX (TeX Live - document preparation system)" "n" "$FORCE_RUN"
+}
+
+#
 # Install infrastructure and services
 #
 install_infrastructure_services() {
   print_section "Infrastructure & Services"
 
   run_script_with_confirmation "install_docker.sh" "Docker Engine & Docker Compose" "y" "$FORCE_RUN"
+  run_script_with_confirmation "install_ollama.sh" "Ollama (Local LLM inference engine)" "n" "$FORCE_RUN"
   run_script_with_confirmation "install_powershell.sh" "PowerShell (pwsh)" "n" "$FORCE_RUN"
   run_script_with_confirmation "install_bitwarden_bws.sh" "Bitwarden Secrets CLI (bws)" "n" "$FORCE_RUN"
   run_script_with_confirmation "install_openssh_server.sh" "OpenSSH Server" "n" "$FORCE_RUN"
@@ -139,8 +157,12 @@ install_development_environments() {
   # Install development environments
   install_dev_with_confirmation "java" "Java" "n" "$FORCE_RUN"
   install_dev_with_confirmation "node" "Node.js" "n" "$FORCE_RUN"
+  run_script_with_confirmation "install_bun.sh" "Bun (JavaScript/TypeScript runtime)" "n" "$FORCE_RUN"
   install_dev_with_confirmation "python" "Python" "n" "$FORCE_RUN"
   install_dev_with_confirmation "rust" "Rust" "n" "$FORCE_RUN"
+
+  # Go/Golang
+  run_script_with_confirmation "install_go.sh" "Go (Golang programming language)" "n" "$FORCE_RUN"
 }
 
 #
@@ -172,6 +194,37 @@ install_npm_global_packages() {
     return 0
   else
     print_warning "Some npm packages may have failed to install"
+    return 0  # Don't fail the entire installation
+  fi
+}
+
+#
+# Install global Bun packages
+#
+install_bun_global_packages() {
+  # Only run if Bun is installed
+  if ! command -v bun &> /dev/null; then
+    print_info "Bun is not installed. Skipping global Bun packages."
+    return 0
+  fi
+
+  local script_id="bun_global_packages"
+
+  # Check if already run (unless force run)
+  if [[ "$FORCE_RUN" != "true" ]] && should_skip_script "$script_id"; then
+    print_info "Global Bun packages already installed. Skipping."
+    return 0
+  fi
+
+  # Run the Bun packages script with YOLO_MODE passed through
+  export YOLO_MODE
+  bash "../../common/install_bun_global_packages.sh"
+
+  if [ $? -eq 0 ]; then
+    mark_script_completed "$script_id" "1.0"
+    return 0
+  else
+    print_warning "Some Bun packages may have failed to install"
     return 0  # Don't fail the entire installation
   fi
 }
