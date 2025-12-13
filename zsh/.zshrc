@@ -88,6 +88,11 @@ if [ -f "$HOME/.config/shell/aliases.sh" ]; then
   source "$HOME/.config/shell/aliases.sh"
 fi
 
+# Source shared functions
+if [ -f "$HOME/.config/shell/functions.sh" ]; then
+  source "$HOME/.config/shell/functions.sh"
+fi
+
 # Zoxide (better cd)
 # Smart directory jumping with 'z' command
 # Must be loaded after compinit
@@ -320,3 +325,30 @@ alias guinetikapi="guinetik-login"
 # END GUINETIK CONFIG
 
 . "$HOME/.atuin/bin/env"
+
+# EDITOR - Set by micro installer
+export EDITOR=micro
+
+# pnpm
+export PNPM_HOME="/home/guinetik/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# bun completions
+[ -s "/home/guinetik/.bun/_bun" ] && source "/home/guinetik/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Bun - added by gui-dotfiles
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Go (Golang) - added by gui-dotfiles
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin

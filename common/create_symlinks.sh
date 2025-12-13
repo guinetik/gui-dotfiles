@@ -7,6 +7,7 @@ source "$SYMLINKS_SCRIPT_DIR/utils.sh"
 # Create required directories
 mkdir -p ~/.config
 mkdir -p ~/.config/shell
+mkdir -p ~/.claude
 
 # Create symlinks
 print_info "Creating symlinks..."
@@ -18,8 +19,10 @@ SYMLINKS=(
   "zsh/.zshenv:$HOME/.zshenv"
   "zsh/.zsh_plugins.txt:$HOME/.zsh_plugins.txt"
   "shell/aliases.sh:$HOME/.config/shell/aliases.sh"
+  "shell/functions.sh:$HOME/.config/shell/functions.sh"
   "starship/starship.toml:$HOME/.config/starship.toml"
   "git/.gitconfig:$HOME/.gitconfig"
+  ".claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
 )
 
 # Create symlinks
@@ -44,5 +47,7 @@ for symlink in "${SYMLINKS[@]}"; do
 done
 
 print_success "Symlinks created successfully!"
-print_info "Shell aliases are now available in both bash and zsh"
+print_info "Shell aliases and functions are now available in both bash and zsh"
+print_info "Run 'myenv' command to discover all installed tools and environment setup"
+print_info "Run 'tradecraft' command to see working preferences and philosophy"
 print_info "Modern CLI tools will be available after running install_modern_tools.sh"
