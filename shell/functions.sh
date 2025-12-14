@@ -291,3 +291,55 @@ tradecraft() {
   echo -e "${yellow}   • Treat them as domain expert who needs velocity${reset}"
   echo ""
 }
+
+# promptmode - Toggle between minimal and full starship prompts
+# Usage: promptmode [minimal|full|toggle]
+promptmode() {
+  local mode="${1:-toggle}"
+  local minimal_config="$HOME/.config/starship-minimal.toml"
+
+  # Color codes
+  local green='\033[32m'
+  local yellow='\033[33m'
+  local reset='\033[0m'
+
+  case "$mode" in
+    minimal)
+      export STARSHIP_CONFIG="$minimal_config"
+      echo -e "${green}✓${reset} Switched to minimal prompt"
+      ;;
+    full)
+      unset STARSHIP_CONFIG
+      echo -e "${green}✓${reset} Switched to full Vercel-style prompt"
+      ;;
+    toggle)
+      if [ "$STARSHIP_CONFIG" = "$minimal_config" ]; then
+        unset STARSHIP_CONFIG
+        echo -e "${green}✓${reset} Switched to full prompt"
+      else
+        export STARSHIP_CONFIG="$minimal_config"
+        echo -e "${green}✓${reset} Switched to minimal prompt"
+      fi
+      ;;
+    *)
+      echo -e "${yellow}Usage:${reset} promptmode [minimal|full|toggle]"
+      echo -e "  minimal - Switch to minimal prompt"
+      echo -e "  full    - Switch to full Vercel-style prompt"
+      echo -e "  toggle  - Toggle between modes (default)"
+      return 1
+      ;;
+  esac
+
+  # Reinitialize starship for current shell
+  if [ -n "$ZSH_VERSION" ]; then
+    eval "$(starship init zsh)"
+  elif [ -n "$BASH_VERSION" ]; then
+    eval "$(starship init bash)"
+  fi
+
+  # Show current prompt on next line
+  echo -e "${yellow}New prompt will appear below:${reset}"
+}
+
+# Alias for convenience
+alias toggleprompt='promptmode toggle'
