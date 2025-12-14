@@ -74,6 +74,10 @@ compinit
 
 # Prompt - Use starship if available
 if command -v starship &> /dev/null; then
+  # Use minimal config for Claude Code agent sessions
+  if [ "$CLAUDECODE" = "1" ]; then
+    export STARSHIP_CONFIG="$HOME/.config/starship-minimal.toml"
+  fi
   eval "$(starship init zsh)"
 else
   # Basic prompt if starship isn't available

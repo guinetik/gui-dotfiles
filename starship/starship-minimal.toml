@@ -1,0 +1,27 @@
+# Starship Minimal Configuration
+# Ultra-minimal prompt for Claude Code agent sessions
+# Example output: ~/project (main) ❯
+
+format = """
+$directory\
+$git_branch\
+$character\
+"""
+
+add_newline = false
+
+[directory]
+format = '[$path]($style) '
+style = 'cyan'
+truncation_length = 3
+truncate_to_repo = true
+home_symbol = '~'
+
+[git_branch]
+format = '([$symbol$branch]($style) )'
+symbol = ''
+style = 'green'
+
+[character]
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'

@@ -34,6 +34,10 @@ fi
 
 # Enable starship prompt
 if command -v starship &> /dev/null; then
+  # Use minimal config for Claude Code agent sessions
+  if [ "$CLAUDECODE" = "1" ]; then
+    export STARSHIP_CONFIG="$HOME/.config/starship-minimal.toml"
+  fi
   eval "$(starship init bash)"
 fi
 
