@@ -11,12 +11,26 @@ while IFS='|' read -r src target; do
 done < <(psv_filter "$ROOT/linux/links.psv")
 assert_equal "$missing" "0" "no missing sources"
 
-# Reconstruct the original hardcoded SYMLINKS array (source:target per
-# line) straight from git history, so both the count and the individual
-# targets stay derived rather than hand-copied magic values.
-old_links=$(git -C "$ROOT" show HEAD:common/create_symlinks.sh \
-  | awk '/^SYMLINKS=\(/{flag=1;next} /^\)/{flag=0} flag' \
-  | sed -E 's/^[[:space:]]*"//; s/"[[:space:]]*$//')
+# The original hardcoded SYMLINKS array from common/create_symlinks.sh, as it
+# stood at 5eeb532 — the commit before the map was extracted into
+# linux/links.psv. Golden values, pinned deliberately.
+#
+# An earlier version of this test read them from `git show HEAD:...`, which
+# worked only while the extraction was uncommitted: once committed, HEAD holds
+# the rewritten script with no array in it, the expected count silently becomes
+# zero, and the test invalidates itself at the exact moment it starts mattering.
+# It also broke in a shallow clone. Expectations that float with HEAD are not
+# expectations. If you intentionally add or remove a link, update this list in
+# the same commit — that edit is the point, not an obstacle.
+old_links="bash/.bashrc:\$HOME/.bashrc
+zsh/.zshrc:\$HOME/.zshrc
+zsh/.zshenv:\$HOME/.zshenv
+zsh/.zsh_plugins.txt:\$HOME/.zsh_plugins.txt
+shell/aliases.sh:\$HOME/.config/shell/aliases.sh
+shell/functions.sh:\$HOME/.config/shell/functions.sh
+starship/starship.toml:\$HOME/.config/starship.toml
+git/.gitconfig:\$HOME/.gitconfig
+.claude/CLAUDE.md:\$HOME/.claude/CLAUDE.md"
 
 test_case "link map covers the same count as the old hardcoded array"
 expected_count=$(echo "$old_links" | grep -c .)
