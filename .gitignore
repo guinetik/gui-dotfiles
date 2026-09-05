@@ -1,0 +1,37 @@
+# Expanded in Task 11 of the windows-dotfiles-unification plan.
+.superpowers/
+
+# Key material. This repo is public: nothing here is negotiable.
+*.asc
+*.pem
+*.ppk
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+*.gpg
+known_hosts
+
+# Credentials and tokens
+.env
+.env.*
+*.env
+*secret*
+*credential*
+*token*
+wakatime.cfg
+*firebase*.json
+
+# Machine-local config that should not be shared
+AMH2W-Profile-Config.json
+
+# Binaries and archives - these belong in releases, not in a dotfiles repo
+*.zip
+*.exe
+*.msi
+
+# Scratch
+tmp/
+var/
+*.log
