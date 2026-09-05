@@ -1,12 +1,20 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Starship Configuration - Vercel Aesthetic
+# Starship Configuration - Vercel Aesthetic with Nerd Fonts
 # "Terminal meets modern web" with phosphor green accents on pure black
 # Two-line format: info on line 1, prompt character on line 2
+# Uses Nerd Font glyphs for all icons (no emojis, no pill-based rendering)
+#
+# IMPORTANT: For icons to display properly, you must:
+# 1. Install a Nerd Font (e.g., via: all my homies install nerdfonts install FiraCode)
+# 2. Configure your terminal to use the Nerd Font
+# 3. Starship will automatically use Nerd Font symbols when a Nerd Font is active
+# 
+# If icons appear as boxes or question marks, your terminal font is not set to a Nerd Font
 
 format = """
-$username\
 $os\
+$username\
 $status\
 $directory\
 $git_branch\
@@ -46,50 +54,39 @@ black = '#000000'              # Pure black - backgrounds
 # Status (only displayed on command error)
 # ─────────────────────────────────────────
 [status]
-format = '([](bg:red fg:white)[ $status](bg:red fg:white)[](bg:black fg:red) )'
+format = '[ $status]($style) '
+style = 'bold red'
 disabled = false
 pipestatus = true
 pipestatus_separator = "|"
 pipestatus_segment_format = "$status"
 
 # ─────────────────────────────────────────
-# Directory
+# Directory (Nerd Font: folder icon - more visible)
 # ─────────────────────────────────────────
 [directory]
-format = '[$path]($style) · '
+format = '[$read_only$path]($style) · '
 style = 'bold cyan'
 truncation_length = 2
 truncate_to_repo = true
 home_symbol = '~'
-read_only = ' 󱧵'
-read_only_style = 'red'
+read_only = '  '
+read_only_style = 'bold red'
 
 # ─────────────────────────────────────────
-# Git Branch
+# Git Branch (Nerd Font: branch icon)
 # ─────────────────────────────────────────
 [git_branch]
-format = '[$symbol$branch]($style) · '
-symbol = ' '
+format = '[ $symbol$branch ]($style) '
 style = 'bold phosphor_core'
 truncation_length = 20
 
 # ─────────────────────────────────────────
-# Git Status
+# Git Status (uses Starship's default Nerd Font symbols)
 # ─────────────────────────────────────────
 [git_status]
 format = '([$all_status$ahead_behind]($style) )'
 style = 'phosphor_bright'
-conflicted = '='
-up_to_date = ''
-untracked = '?${count}'
-stashed = '$'
-modified = '!${count}'
-staged = '+${count}'
-renamed = '»'
-deleted = '✘${count}'
-ahead = '⇡${count}'
-diverged = '⇕⇡${ahead_count}⇣${behind_count}'
-behind = '⇣${count}'
 
 # ─────────────────────────────────────────
 # Fill - right-align everything after this
@@ -98,101 +95,94 @@ behind = '⇣${count}'
 symbol = ' '
 
 # ─────────────────────────────────────────
-# Language Runtimes (conditional display)
+# Language Runtimes (Nerd Font glyphs - larger, more visible)
+# Note: Symbols use Starship's default Nerd Font icons
+# Make sure you have a Nerd Font installed for icons to display
 # ─────────────────────────────────────────
 
 [nodejs]
-format = '[$symbol$version]($style) '
-symbol = ' '
-style = 'phosphor_dim'
+format = '[ $symbol $version ]($style)'
+style = 'bold phosphor_dim'
 detect_files = ['package.json', '.node-version', '.nvmrc']
 detect_extensions = []
 detect_folders = []
 
 [python]
-format = '[$symbol$version]($style) '
-symbol = ' '
-style = 'phosphor_dim'
+format = '[ $symbol $version ]($style)'
+style = 'bold phosphor_dim'
 detect_files = ['requirements.txt', 'pyproject.toml', '.python-version', 'Pipfile', 'tox.ini', 'setup.py', '__pycache__']
 detect_extensions = ['py']
 detect_folders = []
 
 [java]
-format = '[$symbol$version]($style) '
-symbol = ' '
-style = 'phosphor_dim'
+format = '[ $symbol $version ]($style)'
+style = 'bold phosphor_dim'
 detect_files = ['pom.xml', 'build.gradle', 'build.gradle.kts', 'settings.gradle', 'settings.gradle.kts']
 detect_extensions = []
 detect_folders = []
 
 [golang]
-format = '[$symbol$version]($style) '
-symbol = '󰟓 '
-style = 'phosphor_dim'
+format = '[ $symbol $version ]($style)'
+style = 'bold phosphor_dim'
 detect_files = ['go.mod', 'go.sum', 'go.work', 'glide.yaml', 'Gopkg.yml', 'Gopkg.lock']
 detect_extensions = ['go']
 detect_folders = []
 
 [rust]
-format = '[$symbol$version]($style) '
-symbol = ' '
-style = 'phosphor_dim'
+format = '[ $symbol $version ]($style)'
+style = 'bold phosphor_dim'
 detect_files = ['Cargo.toml', 'Cargo.lock']
 detect_extensions = ['rs']
 detect_folders = []
 
 [bun]
-format = '[$symbol$version]($style) '
-symbol = ' '
-style = 'phosphor_dim'
+format = '[ $symbol $version ]($style)'
+style = 'bold phosphor_dim'
 detect_files = ['bun.lockb', 'bunfig.toml']
 detect_extensions = []
 detect_folders = []
 
 [deno]
-format = '[$symbol$version]($style) '
-symbol = ' '
-style = 'phosphor_dim'
+format = '[ $symbol $version ]($style)'
+style = 'bold phosphor_dim'
 detect_files = ['deno.json', 'deno.jsonc', 'deno.lock']
 detect_extensions = ['ts', 'tsx', 'js', 'jsx']
 detect_folders = []
 
 [zig]
-format = '[$symbol$version]($style) '
-symbol = '⚡ '
-style = 'phosphor_dim'
+format = '[ $symbol $version ]($style)'
+style = 'bold phosphor_dim'
 detect_files = ['build.zig', 'build.zig.zon']
 detect_extensions = ['zig']
 detect_folders = []
 
 [c]
-format = '[$symbol$version]($style) '
-symbol = ' '
-style = 'phosphor_dim'
+format = '[ $symbol $version ]($style)'
+style = 'bold phosphor_dim'
 detect_files = []
 detect_extensions = ['c', 'h']
 detect_folders = []
 
 # ─────────────────────────────────────────
-# Command Duration (>500ms)
+# Command Duration (>500ms) (Nerd Font: timer icon)
 # ─────────────────────────────────────────
 [cmd_duration]
 min_time = 500
-format = '· [$duration]($style) '
-style = 'phosphor_bright'
+format = '  [$duration]($style) '
+style = 'bold phosphor_bright'
 disabled = false
 
 # ─────────────────────────────────────────
-# Time (conditional - only when duration shown)
+# Time (Nerd Font: clock icon)
 # ─────────────────────────────────────────
 [time]
-format = '· [$time]($style) '
+format = '  [$time]($style) '
 time_format = '%H:%M:%S'
-style = 'phosphor_bright'
+style = 'bold phosphor_bright'
 disabled = false
 
 # ─────────────────────────────────────────
-# Username (context indicator)
+# Username (uses Starship's default Nerd Font symbol)
 # ─────────────────────────────────────────
 [username]
 format = '[$user]($style_user) · '
@@ -200,70 +190,17 @@ style_user = 'bold phosphor_dim'
 show_always = true
 
 # ─────────────────────────────────────────
-# OS (system indicator with icons)
+# OS (Nerd Font glyphs - no emojis)
 # ─────────────────────────────────────────
 [os]
-format = '[$symbol]($style)'
+format = '[$symbol]($style) · '
 style = 'bold cyan'
 disabled = false
 
-[os.symbols]
-AIX = '🌐'
-AlmaLinux = '💠'
-Alpine = '🏔️'
-Alpaquita = '🦙'
-Amazon = '🦁'
-Android = '🤖'
-Arch = '🎗️'
-Artix = '🎗️'
-Bluefin = '🛟'
-CachyOS = '⚡'
-CentOS = '💠'
-Debian = '🌀'
-DragonFly = '🐉'
-Emscripten = '🔗'
-EndeavourOS = '🚀'
-Fedora = '🎩'
-FreeBSD = '😈'
-Garuda = '🦅'
-Gentoo = '👹'
-HardenedBSD = '🛡️'
-Illumos = '☀️'
-Kali = '🐉'
-Linux = '🐧'
-Mabox = '📦'
-Macos = '🍎'
-Manjaro = '🥭'
-Mariner = '🌊'
-Mint = '🌿'
-MidnightBSD = '🌙'
-NetBSD = '🚩'
-NixOS = '❄️'
-Nobara = '📦'
-OpenBSD = '🐡'
-OpenCloudOS = '☁️'
-openEuler = '🐧'
-openSUSE = '🦎'
-OracleLinux = '🦴'
-Pop = '🍭'
-Raspbian = '🍓'
-Redhat = '🎩'
-RedHatEnterprise = '🎩'
-Redox = '🧪'
-RockyLinux = '💎'
-Solus = '⛵'
-SUSE = '🦎'
-Ubuntu = '🐧'
-Ultramarine = '🌘'
-Uos = '🐧'
-Void = '  '
-Windows = '🪟'
-Unknown = '❓'
-
 # ─────────────────────────────────────────
-# Prompt Character (❯)
+# Prompt Character (uses Starship's default Nerd Font symbol)
 # ─────────────────────────────────────────
 [character]
 format = '$symbol '
-success_symbol = '[❯](bold phosphor_bright)'
-error_symbol = '[❯](bold red)'
+success_symbol = '[ ](bold phosphor_bright)'
+error_symbol = '[ ](bold red)'
