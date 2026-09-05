@@ -45,11 +45,12 @@ Run `myenv` to see installed tools and environment setup.
 - Legacy code modernization (COBOL/CICS → Java microservices)
 - Agent-based systems and RAG
 - Graph algorithms and network analysis
-- Systems automation and DSL design
+- Systems automation and DSL design (Windows-native, WSL2 where Linux-specific)
 - Open-source that actually solves real problems
 
 ## Technology Stack
 
+**Environment:** Windows 11 native daily driver (pwsh 7 + Windows Terminal); WSL2 `guidev` for Linux-specific work, not general development
 **Languages:** Java, Node.js, Python, Rust, PowerShell
 **Frameworks:** Spring Boot, Express, Flask, Svelte, React
 **Patterns:** Hexagonal architecture, LSP-based development, worker-based compute

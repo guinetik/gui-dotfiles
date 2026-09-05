@@ -3,7 +3,7 @@
 ## Quick Commands
 ```bash
 tradecraft  # See working preferences and technical focus
-tour        # See installed tools and modern CLI alternatives
+myenv       # See installed tools and modern CLI alternatives
 ```
 
 ## Key Principles
@@ -16,7 +16,7 @@ tour        # See installed tools and modern CLI alternatives
 **Workflow:**
 - DON'T commit code - user's job
 - ASK before running builds (npm run build, mvn install, etc.)
-- Use `tour` instead of trial-and-error
+- Use `myenv` instead of trial-and-error
 - Code with intent and personality
 
 **Technical:**
@@ -36,8 +36,8 @@ This is a software engineer working on:
 
 They value:
 - Domain expertise (you're supporting velocity, not decisions)
-- Efficiency (one `tour` not 10 guesses)
+- Efficiency (one `myenv` not 10 guesses)
 - Honesty (tradeoffs matter)
 - Code quality (format on save, LSP, conventional commits)
 
-See `.claude/context.md` for full details.
+See `.claude/CLAUDE.md` for full details.

@@ -4,6 +4,19 @@ My personal dotfiles for getting a solid Linux development environment set up fa
 
 ## Quick Start
 
+### Windows (Native)
+
+```powershell
+git clone https://github.com/guinetik/gui-dotfiles
+cd gui-dotfiles
+./powershell/install.ps1 -WhatIf   # see the plan
+./powershell/install.ps1           # apply it
+```
+
+Installs amh2w if missing, hands `windows/packages.json` to
+`all my homies bootstrap`, symlinks the profile drop-in, and makes
+`myenv` and `tradecraft` available in every new shell.
+
 ### WSL Ubuntu (Automated)
 
 The fastest way to get started on WSL:
@@ -191,6 +204,7 @@ gui-dotfiles/
 ├── bash/              # Bash configuration
 ├── zsh/               # Zsh configuration
 ├── shell/             # Shared aliases and functions
+│   └── lib/           # Shared psv.sh parser sourced by shell/functions.sh
 ├── git/               # Git configuration
 ├── starship/          # Starship prompt config
 ├── micro/             # Micro editor settings
@@ -210,6 +224,12 @@ gui-dotfiles/
 │   └── ubuntu/        # Ubuntu/Debian
 │       ├── install.sh # Main installer
 │       └── scripts/   # Ubuntu-specific scripts
+├── linux/             # Linux link map and package catalog (links.psv, packages.psv)
+├── powershell/        # Windows shell: profile drop-ins, installer, and lib/ helpers (links, manifest, psv, render)
+├── windows/           # Windows link map, package manifest, Terminal settings, and provisioning scripts
+├── test/              # Bash + PowerShell test suites, run via run-all.sh / run-all.ps1, plus parity.sh
+├── docs/              # Superpowers plans and specs for this repo's design work
+├── tradecraft.psv     # Working-preferences data, shared by shell/functions.sh and powershell/functions.ps1
 └── wsl/               # WSL provisioning automation
     ├── run.ps1        # PowerShell provisioning script
     └── README.md      # WSL-specific documentation
