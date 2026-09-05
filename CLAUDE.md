@@ -40,4 +40,5 @@ They value:
 - Honesty (tradeoffs matter)
 - Code quality (format on save, LSP, conventional commits)
 
-See `.claude/CLAUDE.md` for full details.
+Full working preferences live in `ai/claude/CLAUDE.md`, which this repo symlinks
+to `~/.claude/CLAUDE.md` — so they apply in every project, not just this one.

@@ -7,4 +7,14 @@ shell/aliases.sh|$HOME/.config/shell/aliases.sh
 shell/functions.sh|$HOME/.config/shell/functions.sh
 starship/starship.toml|$HOME/.config/starship.toml
 git/.gitconfig|$HOME/.gitconfig
-.claude/CLAUDE.md|$HOME/.claude/CLAUDE.md
+
+# Claude Code config, shared with the Windows map. Directory sources, so a skill
+# written in any session lands in this repo immediately.
+#
+# This replaces an earlier entry that linked the repo's PROJECT context file
+# (.claude/CLAUDE.md) over ~/.claude/CLAUDE.md. Those are different documents —
+# one describes this repo, the other is the global instruction file — and
+# conflating them destroyed the global one on Windows before it was caught.
+ai/claude/CLAUDE.md|$HOME/.claude/CLAUDE.md
+ai/claude/skills|$HOME/.claude/skills
+ai/claude/commands|$HOME/.claude/commands

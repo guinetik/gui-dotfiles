@@ -29,28 +29,50 @@ result=$?
 rm -f "$ROOT/test-fixture.pem"
 assert_true "$result" "pem file is ignored"
 
-test_case "both CLAUDE.md files name the same commands"
-root_cmds=$(grep -o 'myenv\|tradecraft' "$ROOT/CLAUDE.md" | sort -u | tr '\n' ' ')
-claude_cmds=$(grep -o 'myenv\|tradecraft' "$ROOT/.claude/CLAUDE.md" | sort -u | tr '\n' ' ')
-assert_equal "$root_cmds" "$claude_cmds" "vocabularies match"
+# There used to be two CLAUDE.md files with overlapping content — the root one
+# (project guide) and .claude/CLAUDE.md (working preferences) — and a test that
+# they at least agreed on command names. The second has been folded into
+# ai/claude/CLAUDE.md, the global instruction file this repo symlinks to
+# ~/.claude/CLAUDE.md, and deleted. One document per audience, so there is no
+# longer a vocabulary to reconcile.
+test_case "the merged project file did not lose the commands it documents"
+missing_cmds=0
+for cmd in myenv tradecraft; do
+  grep -q "$cmd" "$ROOT/CLAUDE.md" || { echo "    root CLAUDE.md no longer mentions: $cmd"; missing_cmds=$((missing_cmds + 1)); }
+  grep -q "$cmd" "$ROOT/ai/claude/CLAUDE.md" || { echo "    ai/claude/CLAUDE.md no longer mentions: $cmd"; missing_cmds=$((missing_cmds + 1)); }
+done
+assert_equal "$missing_cmds" "0" "both surviving docs still name myenv and tradecraft"
+
+test_case "the deleted project context file is really gone"
+[ ! -e "$ROOT/.claude/CLAUDE.md" ]
+assert_true $? ".claude/CLAUDE.md removed"
 
 test_case "every backtick-quoted repo path in the CLAUDE.md files exists"
-# Candidate: a backtick-quoted token that looks like a repo-relative path -
-# it contains a '/' or ends in a doc/script/data extension we ship.
-# Excluded: bare command names (myenv, tradecraft - no slash, no matching
-# extension), anything with a space or shell glob character, and anything
+# Candidate: a backtick-quoted token that looks like a repo-relative path, which
+# means it has a DIRECTORY COMPONENT - a '/' that is not the last character.
+#
+# Requiring the slash is what keeps this honest. An earlier version also accepted
+# any bare token ending in a shipped extension, which flagged `settings.json`
+# (Claude Code's settings, not a file in this repo) and `tmp/`, `var/`
+# (hypothetical scratch dirs at whatever project root you happen to be in). Those
+# are generic references, not links into this repo, and a test that cries wolf
+# about them gets deleted by the next person who trips over it.
+#
+# Excluded: bare command names (myenv, tradecraft), trailing-slash directory
+# placeholders, anything with a space or shell glob character, and anything
 # starting with '~' or '$' (not repo-relative).
 missing_paths=""
 checked=0
-for docfile in "$ROOT/CLAUDE.md" "$ROOT/.claude/CLAUDE.md"; do
+for docfile in "$ROOT/CLAUDE.md" "$ROOT/ai/claude/CLAUDE.md"; do
   while IFS= read -r token; do
     [ -z "$token" ] && continue
     case "$token" in
       *' '*|*'*'*|*'?'*|*'['*|*']'*|'~'*|'$'*) continue ;;
     esac
     case "$token" in
-      */*|*.md|*.sh|*.ps1|*.json|*.psv) : ;;
-      *) continue ;;
+      */) continue ;;      # trailing slash: a directory placeholder like tmp/
+      */*) : ;;            # has a directory component: treat as a repo path
+      *) continue ;;       # bare token: not a repo-relative path
     esac
     checked=$((checked + 1))
     if [ ! -e "$ROOT/$token" ]; then

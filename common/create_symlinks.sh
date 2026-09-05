@@ -25,16 +25,20 @@ while IFS='|' read -r source target; do
   target="${target/\$HOME/$HOME}"
   source_path="$(cd "$SYMLINKS_SCRIPT_DIR/.." && pwd)/$source"
 
-  if [ -f "$source_path" ]; then
+  # -e not -f: some sources are directories (ai/claude/skills, ai/claude/commands).
+  if [ -e "$source_path" ]; then
     print_info "Linking $source_path to $target"
     mkdir -p "$(dirname "$target")"
-    if ln -sf "$source_path" "$target"; then
+    # -n matters for directory targets. Without it, `ln -sf dir existing_dir`
+    # creates the link INSIDE existing_dir instead of replacing it, which looks
+    # like success and produces ~/.claude/skills/skills.
+    if ln -sfn "$source_path" "$target"; then
       print_success "Created symlink: $target -> $source_path"
     else
       print_error "Failed to create symlink: $target"
     fi
   else
-    print_warning "Source file not found: $source_path"
+    print_warning "Source not found: $source_path"
   fi
 done < <(psv_filter "$LINKS_FILE")
 
