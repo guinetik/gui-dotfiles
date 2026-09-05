@@ -1,0 +1,45 @@
+# Linux/WSL tool catalog. Rendered by myenv in shell/functions.sh.
+# Format: command|description   (@section starts a group)
+@section|Modern CLI Tools (Replacements for GNU tools)
+eza|Enhanced ls - colorful file listing with git integration
+bat|Syntax-highlighted cat with line numbers and themes
+rg|Ripgrep - blazingly fast grep alternative
+fd|Fast find command with simpler syntax
+dust|Disk usage analysis - prettier du alternative
+btm|Bottom - system monitor replacing top
+delta|Syntax-highlighted git diffs
+procs|Modern process viewer replacing ps
+bandwhich|Network bandwidth monitor
+tldr|Quick command documentation lookup
+@section|Shell Enhancements
+zoxide|Smart directory jumping (z command)
+atuin|Enhanced shell history with search and sync (Ctrl+R)
+starship|Fast, customizable prompt
+antidote|Zsh plugin manager
+@section|Editors & Development
+nvim|Neovim - modern vim with Lua configuration
+lvim|LunarVim - Neovim-based IDE-like editor
+micro|Nano-like editor with modern features
+fzf|Fuzzy finder - for file/command searching
+qmd|QMD - local markdown search engine for knowledge management
+@section|Language Runtimes
+node|Node.js (JavaScript/TypeScript runtime)
+bun|Bun (JavaScript/TypeScript runtime & package manager)
+python|Python
+cargo|Rust toolchain
+java|Java (via Jabba)
+go|Go (Golang)
+@section|System & Containers
+docker|Docker container runtime
+ollama|Local LLM inference engine for embeddings and inference
+oxker|Docker TUI - interactive container manager
+nu|Structured shell language (nushell)
+@section|Multimedia & Documents
+ffmpeg|Video/audio processing and conversion
+convert|ImageMagick - image manipulation toolkit
+pdflatex|LaTeX - document preparation system
+@section|Node.js Global Packages
+branchlet|Git worktree manager
+claude|Claude Code CLI
+tsc|TypeScript compiler
+nodemon|Auto-restart Node apps

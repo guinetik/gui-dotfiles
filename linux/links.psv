@@ -1,0 +1,10 @@
+# source (repo-relative) | target ($HOME expanded by bash)
+bash/.bashrc|$HOME/.bashrc
+zsh/.zshrc|$HOME/.zshrc
+zsh/.zshenv|$HOME/.zshenv
+zsh/.zsh_plugins.txt|$HOME/.zsh_plugins.txt
+shell/aliases.sh|$HOME/.config/shell/aliases.sh
+shell/functions.sh|$HOME/.config/shell/functions.sh
+starship/starship.toml|$HOME/.config/starship.toml
+git/.gitconfig|$HOME/.gitconfig
+.claude/CLAUDE.md|$HOME/.claude/CLAUDE.md

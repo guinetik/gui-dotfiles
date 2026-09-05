@@ -12,31 +12,23 @@ mkdir -p ~/.claude
 # Create symlinks
 print_info "Creating symlinks..."
 
-# Define symlinks to create
-SYMLINKS=(
-  "bash/.bashrc:$HOME/.bashrc"
-  "zsh/.zshrc:$HOME/.zshrc"
-  "zsh/.zshenv:$HOME/.zshenv"
-  "zsh/.zsh_plugins.txt:$HOME/.zsh_plugins.txt"
-  "shell/aliases.sh:$HOME/.config/shell/aliases.sh"
-  "shell/functions.sh:$HOME/.config/shell/functions.sh"
-  "starship/starship.toml:$HOME/.config/starship.toml"
-  "git/.gitconfig:$HOME/.gitconfig"
-  ".claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
-)
+LINKS_FILE="$(cd "$SYMLINKS_SCRIPT_DIR/.." && pwd)/linux/links.psv"
+source "$(cd "$SYMLINKS_SCRIPT_DIR/.." && pwd)/shell/lib/psv.sh"
 
-# Create symlinks
-for symlink in "${SYMLINKS[@]}"; do
-  IFS=':' read -r source target <<< "$symlink"
-  
-  # Get the absolute path
+if [ ! -f "$LINKS_FILE" ]; then
+  print_error "Link map not found: $LINKS_FILE"
+  return 1 2>/dev/null || exit 1
+fi
+
+while IFS='|' read -r source target; do
+  # Expand $HOME in the target without eval.
+  target="${target/\$HOME/$HOME}"
   source_path="$(cd "$SYMLINKS_SCRIPT_DIR/.." && pwd)/$source"
-  
-  # Create the symlink
+
   if [ -f "$source_path" ]; then
     print_info "Linking $source_path to $target"
-    ln -sf "$source_path" "$target"
-    if [ $? -eq 0 ]; then
+    mkdir -p "$(dirname "$target")"
+    if ln -sf "$source_path" "$target"; then
       print_success "Created symlink: $target -> $source_path"
     else
       print_error "Failed to create symlink: $target"
@@ -44,7 +36,7 @@ for symlink in "${SYMLINKS[@]}"; do
   else
     print_warning "Source file not found: $source_path"
   fi
-done
+done < <(psv_filter "$LINKS_FILE")
 
 print_success "Symlinks created successfully!"
 print_info "Shell aliases and functions are now available in both bash and zsh"
