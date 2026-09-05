@@ -1,0 +1,16 @@
+# source (repo-relative, forward slashes) | target (%VAR% expanded by PowerShell)
+# Prefixed 00- because the profile dot-sources drop-ins alphabetically.
+powershell/dotfiles.ps1|%USERPROFILE%/Documents/PowerShell/drop-ins/00-gui-dotfiles.ps1
+#
+# Cross-platform tool configs. These files are identical on both platforms and
+# only the target path differs, which is why they live in tool-named directories
+# rather than under linux/ or windows/. Starship and micro both read from
+# ~/.config on Windows too, so the paths happen to match the Linux map.
+starship/starship.toml|%USERPROFILE%/.config/starship.toml
+micro/settings.json|%USERPROFILE%/.config/micro/settings.json
+#
+# Deliberately NOT linked here: .claude/CLAUDE.md -> %USERPROFILE%\.claude\CLAUDE.md.
+# The Linux map does link it, because under WSL the repo's project-context file
+# IS the user's global instruction file. On Windows they are two different
+# documents: %USERPROFILE%\.claude\CLAUDE.md holds personal global instructions
+# that the repo's project-context file would destroy. Do not add this line.

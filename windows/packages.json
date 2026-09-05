@@ -1,0 +1,66 @@
+{
+  "core": [
+    { "name": "winget-upgrade", "description": "Upgrade the winget package manager", "command": "winget upgrade winget" },
+    { "name": "git", "description": "Git version control", "command": "winget install --id Git.Git -e --source winget", "check": "git" },
+    { "name": "gh", "description": "GitHub CLI", "command": "scoop install gh", "check": "gh" },
+    { "name": "scoop-sudo", "description": "sudo for Windows via scoop", "command": "scoop install sudo" },
+    { "name": "7zip", "description": "7-Zip archive tool", "command": "choco install 7zip -y", "check": "7z" },
+    { "name": "jq", "description": "Command-line JSON processor", "command": "scoop install jq", "check": "jq" }
+  ],
+  "cli": [
+    { "name": "ripgrep", "description": "Blazingly fast grep alternative", "command": "winget install BurntSushi.ripgrep.MSVC", "check": "rg" },
+    { "name": "eza", "description": "Enhanced ls - colorful listing with git integration", "command": "scoop install eza", "check": "eza" },
+    { "name": "bat", "description": "Syntax-highlighted cat with line numbers", "command": "scoop install bat", "check": "bat" },
+    { "name": "fd", "description": "Fast find with simpler syntax", "command": "scoop install fd", "check": "fd" },
+    { "name": "dust", "description": "Disk usage analysis - prettier du", "command": "scoop install dust", "check": "dust" },
+    { "name": "bottom", "description": "System monitor replacing top", "command": "scoop install bottom", "check": "btm" },
+    { "name": "delta", "description": "Syntax-highlighted git diffs", "command": "scoop install delta", "check": "delta" },
+    { "name": "fzf", "description": "Fuzzy finder for files and commands", "command": "scoop install fzf", "check": "fzf" },
+    { "name": "tealdeer", "description": "Quick command documentation (tldr)", "command": "scoop install tealdeer", "check": "tldr" }
+  ],
+  "shell": [
+    { "name": "starship", "description": "Fast, customizable prompt", "command": "winget install Starship.Starship", "check": "starship" },
+    { "name": "zoxide", "description": "Smart directory jumping (z command)", "command": "winget install ajeetdsouza.zoxide", "check": "zoxide" },
+    { "name": "atuin", "description": "Enhanced shell history with search and sync", "command": "scoop install atuin", "check": "atuin" },
+    { "name": "windows-terminal", "description": "Windows Terminal", "command": "winget install Microsoft.WindowsTerminal", "check": "wt" },
+    { "name": "pwsh", "description": "PowerShell 7", "command": "winget install Microsoft.PowerShell", "check": "pwsh" }
+  ],
+  "editors": [
+    { "name": "neovim", "description": "Neovim - modern vim with Lua configuration", "command": "scoop install neovim", "check": "nvim" },
+    { "name": "vscode", "description": "Visual Studio Code", "command": "winget install Microsoft.VisualStudioCode", "check": "code" },
+    { "name": "micro", "description": "Nano-like editor with modern features", "command": "scoop install micro", "check": "micro" }
+  ],
+  "runtimes": [
+    { "name": "nvm", "description": "Node.js via nvm for Windows", "command": "winget install CoreyButler.NVMforWindows", "check": "node" },
+    { "name": "bun", "description": "Bun JavaScript runtime and package manager", "command": "scoop install bun", "check": "bun" },
+    { "name": "pnpm", "description": "Fast, disk-efficient package manager", "command": "npm install -g pnpm", "check": "pnpm" },
+    { "name": "pyenv-win", "description": "Python version manager for Windows", "command": "scoop install pyenv", "check": "python" },
+    { "name": "uv", "description": "Fast Python package installer and resolver", "command": "winget install astral-sh.uv", "check": "uv" },
+    { "name": "rustup", "description": "Rust toolchain installer", "command": "winget install Rustlang.Rustup", "check": "cargo" },
+    { "name": "dotnet", "description": ".NET SDK", "command": "winget install Microsoft.DotNet.SDK.8", "check": "dotnet" },
+    { "name": "jabba", "description": "Java version manager", "command": "scoop install jabba", "check": "jabba" },
+    { "name": "maven", "description": "Java build tool", "command": "scoop install maven", "check": "mvn" },
+    { "name": "go", "description": "Go toolchain", "command": "winget install GoLang.Go", "check": "go" }
+  ],
+  "containers": [
+    { "name": "docker-desktop", "description": "Docker container runtime", "command": "winget install Docker.DockerDesktop", "check": "docker" },
+    { "name": "ollama", "description": "Local LLM inference engine", "command": "winget install Ollama.Ollama", "check": "ollama" }
+  ],
+  "media": [
+    { "name": "ffmpeg", "description": "Video/audio processing and conversion", "command": "choco install ffmpeg -y", "check": "ffmpeg" },
+    { "name": "imagemagick", "description": "Image manipulation toolkit", "command": "scoop install main/imagemagick", "check": "magick" }
+  ],
+  "security": [
+    { "name": "bws", "description": "Bitwarden Secrets Manager CLI", "command": "choco install bitwarden-secrets-manager-cli -y", "check": "bws" }
+  ],
+  "node-globals": [
+    { "name": "claude-code", "description": "Claude Code CLI", "command": "npm install -g @anthropic-ai/claude-code", "check": "claude" },
+    { "name": "branchlet", "description": "Git worktree manager", "command": "npm install -g branchlet", "check": "branchlet" },
+    { "name": "typescript", "description": "TypeScript compiler", "command": "npm install -g typescript", "check": "tsc" }
+  ],
+  "powershell-modules": [
+    { "name": "PSReadLine", "description": "Command-line editing and prediction", "command": "Install-Module PSReadLine -Scope CurrentUser -Force", "check": "PSReadLine", "checkType": "module" },
+    { "name": "Terminal-Icons", "description": "File type icons in directory listings", "command": "Install-Module Terminal-Icons -Scope CurrentUser -Force", "check": "Terminal-Icons", "checkType": "module" },
+    { "name": "AMH2W", "description": "All My Homies Handle Windows - provisioning DSL", "command": "git clone https://github.com/guinetik/amh2w && ./amh2w/install.ps1", "check": "AMH2W", "checkType": "module" }
+  ]
+}

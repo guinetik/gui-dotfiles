@@ -1,0 +1,51 @@
+# Shared by bash (shell/functions.sh) and PowerShell (powershell/functions.ps1).
+# @title starts the box, @section starts a group, - is a bullet, @tip is a footer line.
+@title|Tradecraft: Working with guinetik
+@section|Primary technical focus
+-|Legacy code modernization (COBOL/CICS -> Java microservices)
+-|Agent-based systems and RAG architectures
+-|Graph algorithms and network analysis (worker-based compute)
+-|Systems automation and DSL design (PowerShell, CLI tools)
+-|Open-source: libraries and frameworks you actually use in production
+-|Interested in computer science education through practical projects
+@section|How they work
+-|Architecture-first - designs constraints then delegates
+-|Leverage-based - systems where each part feeds the next
+-|Socratic - asks questions to guide thinking, not to impress
+-|Accessible - deliberately colloquial, anti-intellectual gatekeeping
+-|Pragmatic - shows value, not theory; efficiency is respect
+@section|Your user prefers
+-|NOT to commit code - that's their job, not yours
+-|To be asked before running builds (npm run build, mvn install, etc.)
+-|Efficiency over exploration - run 'myenv' instead of trial-and-error
+-|Modern CLI tools used explicitly (eza, rg, fd, not aliased to GNU)
+-|Version managers for languages (nvm, pyenv, jabba, rustup)
+@section|Your user values
+-|Format on save (black, prettier, rustfmt)
+-|LSP-based development with proper linting (flake8, eslint, etc.)
+-|Conventional commit messages (feat:, fix:, chore:, etc.)
+-|Idempotent, modular scripts with error handling
+-|Clear, colored output in shell scripts
+@section|How your user thinks
+-|Honesty over false positivity - be direct
+-|Practical efficiency explanations (not theoretical)
+-|Minimal fluff, straight to the point
+-|Creative solutions and pragmatic thinking
+@section|Your user's ecosystem
+-|Windows 11 native daily driver - pwsh 7 + Windows Terminal
+-|WSL2 'guidev' for Linux-specific work, not general development
+-|Full-stack development: Java, Node.js, Python, Rust
+-|Primary project: Guinetik backend (D:\Developer\guinetik-backend)
+-|Editors: Neovim, IntelliJ, VS Code
+-|Docker/containers for infrastructure
+@section|Your user's setup
+-|Dotfiles repo: D:\Developer\gui-dotfiles (symlinked to home)
+-|Windows provisioning via amh2w: all my homies bootstrap
+-|Shell: pwsh 7 with Starship prompt; zsh + Atuin + Zoxide under WSL
+-|Run 'myenv' to see all installed tools and what is missing
+-|Bitwarden Secrets Manager (BWS CLI) for credentials
+@tip|Understand constraints before proposing solutions
+@tip|Be direct - honesty > flattery
+@tip|Respect efficiency - use 'myenv' instead of trial-and-error
+@tip|Ask questions first, don't assume context
+@tip|Treat them as domain expert who needs velocity
