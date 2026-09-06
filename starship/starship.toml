@@ -2,7 +2,9 @@
 
 # Starship Configuration - Vercel Aesthetic with Nerd Fonts
 # "Terminal meets modern web" with phosphor green accents on pure black
-# Two-line format: info on line 1, prompt character on line 2
+# Two-line format: info on line 1, input on line 2. The branch gets the
+# space on line 1; version/time modules are cut because starship has no
+# responsive layout and they forced wraps
 # Uses Nerd Font glyphs for all icons (no emojis, no pill-based rendering)
 #
 # IMPORTANT: For icons to display properly, you must:
@@ -19,18 +21,7 @@ $status\
 $directory\
 $git_branch\
 $git_status\
-$fill\
-$golang\
-$nodejs\
-$bun\
-$deno\
-$python\
-$java\
-$rust\
-$zig\
-$c\
 $cmd_duration\
-$time\
 $line_break\
 $character\
 """
@@ -79,7 +70,6 @@ read_only_style = 'bold red'
 [git_branch]
 format = '[ $symbol$branch ]($style) '
 style = 'bold phosphor_core'
-truncation_length = 20
 
 # ─────────────────────────────────────────
 # Git Status (uses Starship's default Nerd Font symbols)
