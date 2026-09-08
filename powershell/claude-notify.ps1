@@ -85,16 +85,19 @@ begin { }
 process { }
 
 end {
-    $MUSIC = Join-Path $HOME 'Music'
+    # Repo-relative, so the sounds travel with the dotfiles instead of
+    # depending on whatever happens to be sitting in ~/Music. See
+    # ai/claude/sounds/README.md for where they came from.
+    $SOUNDS = Join-Path $PSScriptRoot '..' 'ai' 'claude' 'sounds'
 
     $profiles = @{
         ask  = @{
-            Sound = Join-Path $MUSIC 'PrinceOfPersiaSNESPotion.mp3'
+            Sound = Join-Path $SOUNDS 'PrinceOfPersiaSNESPotion.mp3'
             Title = 'Claude is waiting'
             Body  = 'A question or a permission prompt needs you.'
         }
         done = @{
-            Sound = Join-Path $MUSIC 'PrinceOfPersiaSNESBigPotion.mp3'
+            Sound = Join-Path $SOUNDS 'PrinceOfPersiaSNESBigPotion.mp3'
             Title = 'Claude is done'
             Body  = 'The turn finished. Nothing is blocked.'
         }
@@ -162,7 +165,7 @@ end {
         } else {
             Start-Process -FilePath $ffplay -WindowStyle Hidden `
                 -ArgumentList '-nodisp', '-autoexit', '-loglevel', 'quiet', '-i', $p.Sound
-            Write-Diag "sound: $ffplay -> $(Split-Path $p.Sound -Leaf)"
+            Write-Diag "sound: $ffplay -> $((Resolve-Path -LiteralPath $p.Sound).Path)"
         }
     } catch {
         Write-Diag "sound: failed - $_"
