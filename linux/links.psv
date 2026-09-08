@@ -18,3 +18,9 @@ git/.gitconfig|$HOME/.gitconfig
 ai/claude/CLAUDE.md|$HOME/.claude/CLAUDE.md
 ai/claude/skills|$HOME/.claude/skills
 ai/claude/commands|$HOME/.claude/commands
+#
+# settings.json is per-platform — see the longer note in windows/links.psv.
+# This copy deliberately omits statusLine and the notify hooks: both invoke
+# pwsh scripts by absolute Windows path, and the notify sounds have nowhere
+# to play from under WSL anyway.
+linux/claude-settings.json|$HOME/.claude/settings.json

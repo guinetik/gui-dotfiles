@@ -43,7 +43,8 @@ git/.gitconfig:\$HOME/.gitconfig"
 # home directory, so growing the map should be a visible edit, not a silent one.
 new_links="ai/claude/CLAUDE.md:\$HOME/.claude/CLAUDE.md
 ai/claude/skills:\$HOME/.claude/skills
-ai/claude/commands:\$HOME/.claude/commands"
+ai/claude/commands:\$HOME/.claude/commands
+linux/claude-settings.json:\$HOME/.claude/settings.json"
 
 test_case "link map holds exactly the expected pairs"
 expected_count=$(printf '%s\n%s\n' "$old_links" "$new_links" | grep -c .)

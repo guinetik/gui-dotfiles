@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "ENABLE_LSP_TOOL": "1",
+    "PYTHON_BASIC_REPL": "1",
+    "PYTHONUNBUFFERED": "1"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "Bash(cursor:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run:*)",
+      "Bash(npm test)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(zed:*)",
+      "Read(//d//**)",
+      "Read(//tmp/**)",
+      "WebSearch"
+    ],
+    "deny": [
+      "Bash(py -)",
+      "Bash(py -c:*)",
+      "Bash(pyenv exec python -c:*)",
+      "Bash(python -)",
+      "Bash(python -c:*)",
+      "Bash(python)",
+      "Bash(python3 -)",
+      "Bash(python3 -c:*)",
+      "Bash(python3)",
+      "Bash(uv run python -c:*)"
+    ]
+  },
+  "model": "opus",
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "jdtls-lsp@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true
+  },
+  "effortLevel": "medium",
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "verbose": true,
+  "agentPushNotifEnabled": true
+}

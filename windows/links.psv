@@ -15,6 +15,16 @@ ai/claude/CLAUDE.md|%USERPROFILE%/.claude/CLAUDE.md
 ai/claude/skills|%USERPROFILE%/.claude/skills
 ai/claude/commands|%USERPROFILE%/.claude/commands
 #
+# settings.json is per-platform, which is why it sits here and in linux/
+# rather than in ai/claude/ with the files above. Claude Code reads exactly
+# one user-level settings file, so there is no shared-core-plus-overlay to
+# split it into: each platform needs its own complete copy. The Windows one
+# carries statusLine and the notify hooks, which invoke pwsh scripts by
+# absolute path; the Linux one omits both. Keep the rest of the two files in
+# sync by hand -- they are short, and the alternative is a generator that
+# breaks the symlink write-back the ai/claude/ entries above depend on.
+windows/claude-settings.json|%USERPROFILE%/.claude/settings.json
+#
 # Historical note, kept because it cost a file: an earlier version of this map
 # linked the repo's PROJECT context file (.claude/CLAUDE.md) over
 # %USERPROFILE%\.claude\CLAUDE.md and destroyed the personal global instructions
