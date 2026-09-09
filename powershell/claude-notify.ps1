@@ -15,7 +15,13 @@
       toast   BurntToast. Lands in the Action Center regardless of which
               window has focus, which is why it earns its place next to the
               flash. Visual only: a plain toast cannot focus the terminal
-              without a registered COM activator.
+              without a registered COM activator. Carries a middle line naming
+              the conversation -- its /rename'd or AI-generated title looked
+              up from ~/.claude/sessions/<pid>.json, or the project folder
+              name if the session was never named -- so multiple windows or
+              tabs don't all just say "Claude is done". Uses the Claude icon
+              at ai/claude/icons/claude.png as the app logo when present, so
+              it doesn't just show up as a bare PowerShell toast.
       flash   FlashWindowEx on the terminal window. The taskbar button flashes
               until the window comes to the foreground, and clicking it takes
               you there. Note the corollary: if the terminal is ALREADY
@@ -89,6 +95,7 @@ end {
     # depending on whatever happens to be sitting in ~/Music. See
     # ai/claude/sounds/README.md for where they came from.
     $SOUNDS = Join-Path $PSScriptRoot '..' 'ai' 'claude' 'sounds'
+    $ICON   = Join-Path $PSScriptRoot '..' 'ai' 'claude' 'icons' 'claude.png'
 
     $profiles = @{
         ask  = @{
@@ -111,18 +118,51 @@ end {
     # IsInputRedirected guard matters: without it, a hand-run of this script
     # from an interactive console would block forever waiting on a terminal
     # that is never going to send EOF.
-    $message = ''
+    $message   = ''
+    $sessionId = ''
+    $cwd       = ''
     if ([Console]::IsInputRedirected) {
         try {
             $raw = [Console]::In.ReadToEnd()
             if ($raw.Trim()) {
-                $message = [string](($raw | ConvertFrom-Json).message ?? '')
+                $payload   = $raw | ConvertFrom-Json
+                $message   = [string]($payload.message ?? '')
+                $sessionId = [string]($payload.session_id ?? '')
+                $cwd       = [string]($payload.cwd ?? '')
             }
         } catch {
             Write-Diag "payload: unparseable, treating as absent - $_"
         }
     }
-    Write-Diag "payload: message=[$message]"
+    Write-Diag "payload: message=[$message] session_id=[$sessionId] cwd=[$cwd]"
+
+    # ─── which conversation ──────────────────────────────────────────────────
+    # Neither the hook payload nor the statusline JSON carries a session name,
+    # but the daemon keeps one per running session in ~/.claude/sessions/<pid>.json
+    # -- undocumented, but it's the only place a /rename'd or AI-generated title
+    # lives outside the transcript. Falls back to the project folder name so
+    # unnamed sessions still get something to tell windows/tabs apart by.
+    function Get-SessionLabel([string]$SessionId, [string]$Cwd) {
+        $label = $null
+        if ($SessionId) {
+            try {
+                $sessionsDir = Join-Path $HOME '.claude' 'sessions'
+                $match = Get-ChildItem -LiteralPath $sessionsDir -Filter '*.json' -ErrorAction SilentlyContinue |
+                    ForEach-Object {
+                        try { Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json } catch { $null }
+                    } |
+                    Where-Object { $_ -and $_.sessionId -eq $SessionId } |
+                    Select-Object -First 1
+                if ($match -and $match.name) { $label = $match.name }
+            } catch {
+                Write-Diag "label: session registry lookup failed - $_"
+            }
+        }
+        if (-not $label -and $Cwd) { $label = Split-Path $Cwd -Leaf }
+        $label
+    }
+    $label = Get-SessionLabel -SessionId $sessionId -Cwd $cwd
+    Write-Diag "label: [$label]"
 
     # ─── idle filter ─────────────────────────────────────────────────────────
     # Claude Code's idle notification reads "Claude is waiting for your input".
@@ -176,7 +216,10 @@ end {
     try {
         if (Get-Module -ListAvailable -Name BurntToast) {
             Import-Module BurntToast -ErrorAction Stop
-            New-BurntToastNotification -Text $p.Title, $p.Body -Silent
+            $toastLines = if ($label) { @($p.Title, $label, $p.Body) } else { @($p.Title, $p.Body) }
+            $toastArgs = @{ Text = $toastLines; Silent = $true }
+            if (Test-Path -LiteralPath $ICON) { $toastArgs.AppLogo = (Resolve-Path -LiteralPath $ICON).Path }
+            New-BurntToastNotification @toastArgs
             Write-Diag 'toast: sent via BurntToast'
         } else {
             Write-Diag 'toast: BurntToast not installed, skipping'
