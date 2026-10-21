@@ -8,7 +8,7 @@ test_case "the nonexistent 'tour' command is referenced nowhere"
 # .superpowers/ is excluded: it holds task briefs extracted verbatim from the
 # plan (including this task's own text), not shipped dotfiles.
 hits=$(grep -rn '\btour\b' "$ROOT" \
-        --exclude-dir=.git --exclude-dir=docs --exclude-dir=test --exclude-dir=.superpowers 2>/dev/null | wc -l)
+        --exclude-dir=.git --exclude-dir=docs --exclude-dir=test --exclude-dir=.superpowers 2>/dev/null | wc -l | tr -d " ")
 assert_equal "$hits" "0" "no tour references"
 
 test_case "a gitignore exists"

@@ -12,7 +12,7 @@ eza|Enhanced ls
 INNER
 
 test_case "strips comments and blank lines"
-count=$(psv_filter "$fixture" | wc -l)
+count=$(psv_filter "$fixture" | wc -l | tr -d " ")
 assert_equal "$count" "2" "two real records"
 
 test_case "preserves field content"

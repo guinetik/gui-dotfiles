@@ -48,7 +48,7 @@ linux/claude-settings.json:\$HOME/.claude/settings.json"
 
 test_case "link map holds exactly the expected pairs"
 expected_count=$(printf '%s\n%s\n' "$old_links" "$new_links" | grep -c .)
-actual_count=$(psv_filter "$ROOT/linux/links.psv" | wc -l)
+actual_count=$(psv_filter "$ROOT/linux/links.psv" | wc -l | tr -d " ")
 assert_equal "$actual_count" "$expected_count" "link count matches golden + added pairs"
 
 test_case "every added link target is correct"

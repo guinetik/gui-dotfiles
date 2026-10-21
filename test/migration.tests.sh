@@ -30,7 +30,7 @@ assert_equal "$present" "0" "deliberately dropped files did not come back"
 test_case "no key material came across"
 hits=$(find "$ROOT" -type f \
         \( -name '*.asc' -o -name '*.pem' -o -name 'id_rsa*' -o -name '*firebase*.json' \) \
-        -not -path '*/.git/*' | wc -l)
+        -not -path '*/.git/*' | wc -l | tr -d " ")
 assert_equal "$hits" "0" "no key files in the repo"
 
 test_case "no file staged for commit is ignored-worthy"

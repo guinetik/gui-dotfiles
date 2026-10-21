@@ -12,7 +12,9 @@ mkdir -p ~/.claude
 # Create symlinks
 print_info "Creating symlinks..."
 
-LINKS_FILE="$(cd "$SYMLINKS_SCRIPT_DIR/.." && pwd)/linux/links.psv"
+# Callers may point this at another platform's map (mac/install.sh does).
+LINKS_FILE="${LINKS_FILE:-$(cd "$SYMLINKS_SCRIPT_DIR/.." && pwd)/linux/links.psv}"
+BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 source "$(cd "$SYMLINKS_SCRIPT_DIR/.." && pwd)/shell/lib/psv.sh"
 
 if [ ! -f "$LINKS_FILE" ]; then
@@ -29,6 +31,17 @@ while IFS='|' read -r source target; do
   if [ -e "$source_path" ]; then
     print_info "Linking $source_path to $target"
     mkdir -p "$(dirname "$target")"
+    # A real file or directory in the way gets moved aside, never overwritten.
+    # This is the guard the CLAUDE.md incident (see linux/links.psv) lacked,
+    # and for directories it's also what stops ln from linking INSIDE them.
+    if [ -e "$target" ] && [ ! -L "$target" ]; then
+      # Keep the path relative to $HOME: .claude/settings.json and
+      # .config/micro/settings.json would otherwise collide.
+      backup_path="$BACKUP_DIR/${target#$HOME/}"
+      mkdir -p "$(dirname "$backup_path")"
+      mv "$target" "$backup_path"
+      print_warning "Backed up existing $target to $backup_path"
+    fi
     # -n matters for directory targets. Without it, `ln -sf dir existing_dir`
     # creates the link INSIDE existing_dir instead of replacing it, which looks
     # like success and produces ~/.claude/skills/skills.

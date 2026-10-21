@@ -3,7 +3,9 @@
 # Callers parse fields with: IFS='|' read -r key rest
 
 psv_filter() {
-  local path="$1"
-  [ -f "$path" ] || { echo "PSV file not found: $path" >&2; return 1; }
-  grep -v '^[[:space:]]*#' "$path" | grep -v '^[[:space:]]*$'
+  # Not `path`: in zsh that name is tied to $PATH, and `local path=...`
+  # empties PATH for the function's duration, so grep itself goes missing.
+  local file="$1"
+  [ -f "$file" ] || { echo "PSV file not found: $file" >&2; return 1; }
+  grep -v '^[[:space:]]*#' "$file" | grep -v '^[[:space:]]*$'
 }
