@@ -1,0 +1,18 @@
+# Global mise toolset, linked to ~/.config/mise/config.toml.
+# Projects pin their own versions with a mise.toml (or .nvmrc, .tool-versions);
+# these are just the fallbacks for a shell outside any project.
+#
+# Python is intentionally absent — uv manages Python versions and venvs.
+
+[tools]
+node = "lts"
+bun = "latest"
+pnpm = "latest"
+java = "temurin-21"
+maven = "latest"
+go = "latest"
+rust = "stable"
+
+[settings]
+# Honor .nvmrc / .node-version / .java-version in older projects.
+idiomatic_version_file_enable_tools = ["node", "java"]

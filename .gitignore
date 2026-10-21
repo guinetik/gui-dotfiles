@@ -35,3 +35,7 @@ AMH2W-Profile-Config.json
 tmp/
 var/
 *.log
+
+# claude.ai skills that Claude Code syncs into ~/.claude/skills/synced/. That
+# directory is a symlink into this repo, so without this they'd be committed.
+ai/claude/skills/synced/

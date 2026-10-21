@@ -1,0 +1,24 @@
+# Ghostty, linked to ~/.config/ghostty/config.
+# Reference: `ghostty +show-config --default --docs`
+
+font-family = "FiraCode Nerd Font"
+font-size = 14
+
+# Pure black so the phosphor palette in starship.toml reads the way it does
+# on the other machines.
+background = #000000
+foreground = #e6e6e6
+cursor-color = #39ff14
+selection-background = #003b0f
+
+window-padding-x = 8
+window-padding-y = 6
+window-save-state = always
+macos-titlebar-style = tabs
+
+# Option as Alt so fzf's Alt+C and readline word motions work.
+macos-option-as-alt = true
+
+shell-integration = zsh
+copy-on-select = clipboard
+confirm-close-surface = false

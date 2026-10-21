@@ -1,0 +1,6 @@
+# Local AI stack. Applied by `mac/install.sh --ai`.
+# MLX is not here: it's a Python package, installed with `uv tool install mlx-lm`
+# by the same script.
+
+brew "ollama"      # model server + embeddings; `brew services start ollama`
+cask "lm-studio"   # GUI model browser, MLX backend, `lms` CLI

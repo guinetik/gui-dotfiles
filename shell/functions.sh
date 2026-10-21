@@ -11,13 +11,23 @@
 # the symlink ${BASH_SOURCE[0]} to its real target (shell/functions.sh
 # inside the repo) and go up one directory from that file to reach the
 # repo root.
+#
+# The path is captured once, at source time: zsh has no BASH_SOURCE, and its
+# equivalent (%x) means "this file" only while the file is being sourced, not
+# later from inside a function. eval keeps bash from parsing the zsh syntax.
+if [ -n "$ZSH_VERSION" ]; then
+  eval '_DOTFILES_FUNCTIONS_SRC="${(%):-%x}"'
+else
+  _DOTFILES_FUNCTIONS_SRC="${BASH_SOURCE[0]}"
+fi
+
 _dotfiles_root() {
   if [ -n "$DOTFILES" ] && [ -d "$DOTFILES" ]; then
     printf '%s\n' "$DOTFILES"
     return 0
   fi
 
-  local src="${BASH_SOURCE[0]}"
+  local src="$_DOTFILES_FUNCTIONS_SRC"
   local resolved
   resolved="$(readlink -f "$src" 2>/dev/null)"
   if [ -z "$resolved" ]; then
@@ -38,12 +48,15 @@ _dotfiles_root() {
 }
 
 # myenv - Display installed tools and environment setup
-# Catalog lives in linux/packages.psv; detection happens at runtime.
+# Catalog lives in linux/packages.psv or mac/packages.psv; detection happens at runtime.
 myenv() {
   local bold='\033[1m' blue='\033[34m' green='\033[32m' yellow='\033[33m' red='\033[31m' reset='\033[0m'
   local root
   root="$(_dotfiles_root)"
-  local psv="$root/linux/packages.psv"
+  # One catalog per platform; same format, different tools.
+  local platform=linux
+  [ "$(uname -s)" = "Darwin" ] && platform=mac
+  local psv="$root/$platform/packages.psv"
 
   if [ ! -f "$psv" ]; then
     echo "myenv: catalog not found: $psv" >&2
@@ -77,7 +90,11 @@ myenv() {
   echo -e "${yellow}Tip: Modern tools are installed but NOT aliased to GNU commands.${reset}"
   echo -e "${yellow}Use them directly by name (e.g., 'eza', 'rg', 'fd') when you want modern features.${reset}"
   if [ "$missing" -gt 0 ]; then
-    echo -e "${yellow}${missing} tool(s) missing. Run ./install.sh to install them.${reset}"
+    if [ "$platform" = "mac" ]; then
+      echo -e "${yellow}${missing} tool(s) missing. Run ./mac/install.sh to install them.${reset}"
+    else
+      echo -e "${yellow}${missing} tool(s) missing. Run ./install.sh to install them.${reset}"
+    fi
   fi
   echo ""
 }
@@ -182,3 +199,9 @@ promptmode() {
 
 # Alias for convenience
 alias toggleprompt='promptmode toggle'
+
+# gclaude - Claude Code with the house defaults. Mirrors powershell/claude.ps1.
+# `command` so a future alias or function named claude can't recurse into this.
+gclaude() {
+  CLAUDE_CODE_NO_FLICKER=1 command claude --dangerously-skip-permissions "$@"
+}

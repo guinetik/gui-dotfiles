@@ -17,6 +17,23 @@ Installs amh2w if missing, hands `windows/packages.json` to
 `all my homies bootstrap`, symlinks the profile drop-in, and makes
 `myenv` and `tradecraft` available in every new shell.
 
+### macOS (Apple Silicon)
+
+```bash
+xcode-select --install                     # if not already present
+# install Homebrew from https://brew.sh
+git clone https://github.com/guinetik/gui-dotfiles ~/Developer/gui-dotfiles
+cd ~/Developer/gui-dotfiles
+./mac/install.sh          # Brewfile, symlinks (mac/links.psv), mise runtimes
+./mac/install.sh --ai     # also Ollama, LM Studio, MLX-LM
+```
+
+Runtimes come from [mise](https://mise.jdx.dev) (`mise/config.toml`) and
+[uv](https://docs.astral.sh/uv/) rather than nvm/pyenv/jabba; containers from
+OrbStack; terminal is Ghostty (`ghostty/config`). Anything a link would replace
+is moved to `~/.dotfiles-backup/<timestamp>/` first. Machine-local secrets go
+in `~/.zshrc.local`, which `.zshrc` sources and the repo never sees.
+
 ### WSL Ubuntu (Automated)
 
 The fastest way to get started on WSL:

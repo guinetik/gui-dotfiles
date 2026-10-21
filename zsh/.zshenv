@@ -23,4 +23,22 @@ export XDG_CACHE_HOME="$HOME/.cache"
 # Ensure various bin directories are in PATH
 export PATH="$HOME/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
-. "$HOME/.cargo/env"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# Homebrew (macOS). Here for non-interactive shells; .zshrc re-applies it
+# because /etc/zprofile's path_helper pushes /usr/bin back in front for login shells.
+[ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# Local model storage. When the external drive is mounted, Ollama and the
+# Hugging Face cache (MLX-LM, transformers) keep models on it; when it isn't,
+# both fall back to their defaults on the internal disk. To use another
+# volume, set AI_MODELS_ROOT in ~/.zshenv.local (machine-local, not in the
+# repo; ~/.zshrc.local loads too late for this). LM Studio has no env var for
+# this — point it at $AI_MODELS_ROOT/lmstudio in its settings.
+# Note: launchd-started servers (brew services ollama) don't read this file.
+[ -f "$HOME/.zshenv.local" ] && . "$HOME/.zshenv.local"
+AI_MODELS_ROOT="${AI_MODELS_ROOT:-/Volumes/Models}"
+if [ -d "$AI_MODELS_ROOT" ]; then
+  export OLLAMA_MODELS="$AI_MODELS_ROOT/ollama"
+  export HF_HOME="$AI_MODELS_ROOT/huggingface"
+fi

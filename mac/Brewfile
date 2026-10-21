@@ -1,0 +1,61 @@
+# macOS core dev environment. Applied by mac/install.sh via `brew bundle`.
+# The local AI stack lives in Brewfile.ai so it can be installed on its own.
+#
+# Language runtimes are NOT here: mise owns node/bun/pnpm/java/go/rust (see
+# mise/config.toml) and uv owns Python. Installing them from brew as well
+# gives two copies on PATH and a coin toss over which one wins.
+
+# ─── core ────────────────────────────────────────────────────────────────────
+brew "git"
+brew "gh"
+brew "jq"
+brew "wget"
+
+# ─── modern CLI (mirrors linux/packages.psv) ─────────────────────────────────
+brew "ripgrep"
+brew "eza"
+brew "bat"
+brew "fd"
+brew "dust"
+brew "bottom"
+brew "git-delta"
+brew "procs"
+brew "bandwhich"
+brew "tealdeer"
+brew "fzf"
+brew "tokei"
+brew "superfile"
+
+# ─── shell ───────────────────────────────────────────────────────────────────
+# antidote is deliberately absent: zsh/.zshrc clones it to ~/.antidote itself.
+brew "starship"
+brew "zoxide"
+brew "atuin"
+brew "nushell"
+
+# ─── editors ─────────────────────────────────────────────────────────────────
+brew "neovim"
+brew "micro"
+cask "visual-studio-code"
+
+# ─── runtimes (managers only) ────────────────────────────────────────────────
+brew "mise"
+brew "uv"
+
+# ─── containers ──────────────────────────────────────────────────────────────
+# OrbStack provides the docker CLI, compose, and a Linux VM runner.
+cask "orbstack"
+brew "oxker"
+
+# ─── multimedia ──────────────────────────────────────────────────────────────
+brew "ffmpeg"
+brew "imagemagick"
+
+# ─── terminal + fonts ────────────────────────────────────────────────────────
+# FiraCode Nerd Font because starship/starship.toml names it; without a Nerd
+# Font the prompt and the Claude statusline render glyphs as boxes.
+cask "ghostty"
+cask "font-fira-code-nerd-font"
+
+# ─── AI tooling ──────────────────────────────────────────────────────────────
+cask "claude-code"

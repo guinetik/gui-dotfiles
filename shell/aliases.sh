@@ -4,7 +4,6 @@
 # Basic navigation aliases
 alias cb='z ..'   # cd back (go up one directory)
 alias cls='clear'
-alias gh='history | grep'
 
 # Modern ls alternative (eza/exa) - available as standalone commands
 # Users can use 'eza' or 'exa' directly for the modern features

@@ -13,6 +13,10 @@ fi
 
 # .zshrc - Zsh Configuration File
 
+# Homebrew first, so `command -v` checks below see brew's tools (see .zshenv).
+[ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+typeset -U path  # drop the duplicates that re-applying shellenv leaves behind
+
 # History configuration
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
@@ -47,6 +51,12 @@ export ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 mkdir -p "$ZSH_CACHE_DIR/completions"
 
 source ${ANTIDOTE_HOME}/antidote.zsh
+
+# Plugins like ohmyzsh/git call compdef while loading. Ubuntu's /etc/zsh/zshrc
+# runs compinit for us; macOS doesn't, so do it here. The second compinit after
+# the plugins is still needed to pick up zsh-completions' fpath additions.
+autoload -Uz compinit
+compinit
 
 # Load plugins (static)
 if [[ -f ${ZDOTDIR:-$HOME}/.zsh_plugins.zsh ]]; then
@@ -206,14 +216,23 @@ if [ -d "$HOME/.pyenv" ] && [ -f "$HOME/.pyenv/bin/pyenv" ]; then
   eval "$(pyenv init -)"
 fi
 
+# mise (polyglot version manager — node/java/go/rust on macOS)
+if command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
 # Jabba (Java Version Manager)
 [ -s "$HOME/.jabba/jabba.sh" ] && source "$HOME/.jabba/jabba.sh"
 
 # Rust
 [ -f "$HOME/.cargo/env" ] && source "$HOME/.cargo/env"
 
-# Local bin directory
+# Local bin directory (also where uv tools like mlx-lm land)
 [ -d "$HOME/.local/bin" ] && export PATH="$HOME/.local/bin:$PATH"
+
+# LM Studio CLI. Declared here so the app's first-run bootstrap finds it on
+# PATH instead of appending its own line to this (symlinked) file.
+[ -d "$HOME/.lmstudio/bin" ] && export PATH="$PATH:$HOME/.lmstudio/bin"
 
 # Custom functions
 
@@ -307,13 +326,13 @@ guinetik-login() {
 alias guinetikapi="guinetik-login"
 # END GUINETIK CONFIG
 
-. "$HOME/.atuin/bin/env"
+[ -f "$HOME/.atuin/bin/env" ] && . "$HOME/.atuin/bin/env"
 
 # EDITOR - Set by micro installer
 export EDITOR=micro
 
 # pnpm
-export PNPM_HOME="/home/guinetik/.local/share/pnpm"
+export PNPM_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -321,13 +340,9 @@ esac
 # pnpm end
 
 # bun completions
-[ -s "/home/guinetik/.bun/_bun" ] && source "/home/guinetik/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# Bun - added by gui-dotfiles
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
@@ -335,3 +350,4 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
+

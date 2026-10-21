@@ -1,0 +1,54 @@
+# macOS tool catalog. Rendered by myenv in shell/functions.sh.
+# Format: command|description   (@section starts a group)
+# What actually gets installed lives in mac/Brewfile, mac/Brewfile.ai and mise/config.toml.
+@section|Modern CLI Tools (Replacements for BSD tools)
+eza|Enhanced ls - colorful file listing with git integration
+bat|Syntax-highlighted cat with line numbers and themes
+rg|Ripgrep - blazingly fast grep alternative
+fd|Fast find command with simpler syntax
+dust|Disk usage analysis - prettier du alternative
+btm|Bottom - system monitor replacing top
+delta|Syntax-highlighted git diffs
+procs|Modern process viewer replacing ps
+bandwhich|Network bandwidth monitor
+tldr|Quick command documentation lookup
+tokei|Code statistics and line counting
+spf|Superfile - terminal file manager
+@section|Shell Enhancements
+zoxide|Smart directory jumping (z command)
+atuin|Enhanced shell history with search and sync (Ctrl+R)
+starship|Fast, customizable prompt
+antidote|Zsh plugin manager
+nu|Structured shell language (nushell)
+ghostty|Ghostty terminal
+@section|Editors & Development
+nvim|Neovim - modern vim with Lua configuration
+micro|Nano-like editor with modern features
+code|Visual Studio Code
+fzf|Fuzzy finder - for file/command searching
+gh|GitHub CLI
+@section|Language Runtimes
+mise|Polyglot version manager (node, java, go, rust)
+uv|Python versions, venvs and tools
+node|Node.js (via mise)
+bun|Bun runtime & package manager (via mise)
+pnpm|pnpm package manager (via mise)
+java|Java - Temurin (via mise)
+mvn|Maven (via mise)
+go|Go (via mise)
+cargo|Rust toolchain (via mise)
+@section|Containers
+docker|Docker CLI (via OrbStack)
+orb|OrbStack - containers and Linux VMs
+oxker|Docker TUI - interactive container manager
+@section|Local AI
+ollama|Local LLM server for embeddings and inference
+lms|LM Studio CLI
+mlx_lm.generate|MLX-LM - Apple Silicon native inference (uv tool)
+@section|Multimedia
+ffmpeg|Video/audio processing and conversion
+magick|ImageMagick - image manipulation toolkit
+@section|Node.js Global Packages
+claude|Claude Code CLI
+branchlet|Git worktree manager
+tsc|TypeScript compiler
