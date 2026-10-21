@@ -1,7 +1,7 @@
 # Custom shell functions
 # This file is sourced by both .bashrc and .zshrc
 
-# _dotfiles_root - resolve the repo root, self-locating like PowerShell's
+# _dotfiles_resolve_root - resolve the repo root, self-locating like PowerShell's
 # Get-DotfilesRoot (powershell/functions.ps1).
 # This file is installed as a SYMLINK at ~/.config/shell/functions.sh
 # (see linux/links.psv) pointing into the repo checkout. Nothing on Linux
@@ -21,7 +21,7 @@ else
   _DOTFILES_FUNCTIONS_SRC="${BASH_SOURCE[0]}"
 fi
 
-_dotfiles_root() {
+_dotfiles_resolve_root() {
   if [ -n "$DOTFILES" ] && [ -d "$DOTFILES" ]; then
     printf '%s\n' "$DOTFILES"
     return 0
@@ -47,12 +47,19 @@ _dotfiles_root() {
   (cd "$(dirname "$resolved")/.." && pwd)
 }
 
+# __dotfiles_root - the resolved root, baked in as a literal at source time.
+# Claude Code's shell snapshot keeps functions and PATH but drops plain
+# variables (so _DOTFILES_FUNCTIONS_SRC is gone) and skips single-underscore
+# functions (so _dotfiles_resolve_root is gone). A double-underscore function
+# with the path inlined survives the snapshot intact.
+eval "__dotfiles_root() { printf '%s\n' '$(_dotfiles_resolve_root)'; }"
+
 # myenv - Display installed tools and environment setup
 # Catalog lives in linux/packages.psv or mac/packages.psv; detection happens at runtime.
 myenv() {
   local bold='\033[1m' blue='\033[34m' green='\033[32m' yellow='\033[33m' red='\033[31m' reset='\033[0m'
   local root
-  root="$(_dotfiles_root)"
+  root="$(__dotfiles_root)"
   # One catalog per platform; same format, different tools.
   local platform=linux
   [ "$(uname -s)" = "Darwin" ] && platform=mac
@@ -104,7 +111,7 @@ myenv() {
 tradecraft() {
   local bold='\033[1m' blue='\033[34m' green='\033[32m' yellow='\033[33m' reset='\033[0m'
   local root
-  root="$(_dotfiles_root)"
+  root="$(__dotfiles_root)"
   local psv="$root/tradecraft.psv"
 
   if [ ! -f "$psv" ]; then
